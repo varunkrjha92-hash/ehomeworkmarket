@@ -89,7 +89,7 @@ function Home() {
       <div style={{ background: "#1a3a5c", color: "#fff", padding: "64px 24px", textAlign: "center" }}>
         <h1 style={{ fontFamily: "Georgia", fontSize: 40, color: "#f5c842", marginBottom: 12 }}>Get Help With Your Assignment</h1>
         <p style={{ fontSize: 18, color: "#cce0f5", maxWidth: 600, margin: "0 auto 28px", fontFamily: "sans-serif" }}>
-          Post your question, get expert help, and <strong style={{ color: "#f5c842" }}>pay only after you're satisfied</strong>.
+          Post your question, get expert help, and <strong style={{ color: "#f5c842" }}>100% original & plagiarism free assignments</strong>.
         </p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
           <Link to="/ask"><button style={S.btnGold}>Post Your Question →</button></Link>
@@ -103,16 +103,18 @@ function Home() {
           <h2 style={{ ...S.h2, textAlign: "center", fontSize: 28 }}>How It Works</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 20, marginTop: 28 }}>
             {[
-              { n: "1", icon: "📋", t: "Post Assignment", d: "Describe your question, set your budget & deadline" },
-              { n: "2", icon: "✍️", t: "Expert Assigned", d: "A verified tutor picks up your assignment" },
-              { n: "3", icon: "📬", t: "Get Solution", d: "Receive notification when your work is ready" },
-              { n: "4", icon: "💳", t: "Pay After Grades", d: "Pay only when satisfied with the solution" },
+              { n: "1", icon: "📋", t: "Post Assignment", d: "Describe your question, set your budget & deadline", highlight: false },
+              { n: "2", icon: "✍️", t: "Expert Assigned", d: "A verified tutor picks up your assignment", highlight: false },
+              { n: "3", icon: "📬", t: "Get Solution", d: "Receive notification when your work is ready", highlight: false },
+              { n: "4", icon: "🎁", t: "First Assignment FREE!", d: "Get your very first assignment solved at absolutely no cost. Zero risk, zero payment.", highlight: true },
             ].map(s => (
-              <div key={s.n} style={S.card}>
+              <div key={s.n} style={{ ...S.card, ...(s.highlight ? { background: "#1a3a5c", border: "2px solid #f5c842", transform: "scale(1.04)" } : {}) }}>
                 <div style={{ fontSize: 28, marginBottom: 8 }}>{s.icon}</div>
-                <div style={{ fontFamily: "sans-serif", fontSize: 12, color: "#1a3a5c", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>Step {s.n}</div>
-                <div style={{ fontFamily: "Georgia", fontSize: 16, fontWeight: 700, color: "#1a3a5c", marginBottom: 6 }}>{s.t}</div>
-                <div style={{ fontFamily: "sans-serif", fontSize: 13, color: "#666" }}>{s.d}</div>
+                {!s.highlight && <div style={{ fontFamily: "sans-serif", fontSize: 12, color: "#1a3a5c", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>Step {s.n}</div>}
+                {s.highlight && <div style={{ fontFamily: "sans-serif", fontSize: 11, color: "#f5c842", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>🌟 Special Offer</div>}
+                <div style={{ fontFamily: "Georgia", fontSize: 16, fontWeight: 700, color: s.highlight ? "#f5c842" : "#1a3a5c", marginBottom: 6 }}>{s.t}</div>
+                <div style={{ fontFamily: "sans-serif", fontSize: 13, color: s.highlight ? "#cce0f5" : "#666" }}>{s.d}</div>
+                {s.highlight && <div style={{ marginTop: 12 }}><Link to="/ask"><button style={{ ...S.btnGold, fontSize: 12, padding: "8px 16px" }}>Claim Free Assignment →</button></Link></div>}
               </div>
             ))}
           </div>
