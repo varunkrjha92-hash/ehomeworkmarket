@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from "re
 import axios from "axios";
 import { io } from "socket.io-client";
 
-const API = "http://localhost:5000/api";
-const SOCKET_URL = "http://localhost:5000";
+const API = "https://ehomeworkmarket-production.up.railway.app/api";
+const SOCKET_URL = "https://ehomeworkmarket-production.up.railway.app";
 
 const subjects = ["Nursing","Business","Psychology","Computer Science","Accounting","Statistics","Marketing","History","Economics","Law","Biology","English"];
 
