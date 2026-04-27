@@ -19,6 +19,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/questions', require('./routes/questions'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/payment', require('./routes/payment'));
+app.use('/api/solutions', require('./routes/solutions'));
 
 io.on('connection', (socket) => {
   socket.on('join_room', (roomId) => socket.join(roomId));
