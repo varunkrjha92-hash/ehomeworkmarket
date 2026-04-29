@@ -1,9 +1,5 @@
 const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-console.log('R2 DEBUG:');
-console.log('  ENDPOINT:', JSON.stringify(process.env.R2_ENDPOINT));
-console.log('  ACCESS_KEY_ID:', JSON.stringify(process.env.R2_ACCESS_KEY_ID?.slice(0, 5) + '...'));
-console.log('  BUCKET_NAME:', JSON.stringify(process.env.R2_BUCKET_NAME));
 
 // R2 client — uses S3 protocol with Cloudflare R2 endpoint
 const r2 = new S3Client({

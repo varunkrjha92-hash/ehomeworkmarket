@@ -115,11 +115,22 @@ router.post('/', authMiddleware, isAdmin, upload.single('file'), async (req, res
   }
 });
 
-// GET /api/solutions/:id/download — get signed download URL (admin for now; later: paid users)
-router.get('/:id/download', authMiddleware, isAdmin, async (req, res) => {
+// GET /api/solutions/:id/download — admin OR paid users get signed download URL
+router.get('/:id/download', authMiddleware, async (req, res) => {
   try {
     const solution = await Solution.findById(req.params.id);
     if (!solution) return res.status(404).json({ message: 'Solution not found' });
+
+    // Allow if admin, OR if user has a completed purchase for this solution
+    if (req.user.role !== 'admin') {
+      const Purchase = require('../models/Purchase');
+      const purchase = await Purchase.findOne({
+        userId: req.user.id,
+        solutionId: solution._id,
+        status: 'completed'
+      });
+      if (!purchase) return res.status(403).json({ message: 'Purchase required to download' });
+    }
 
     const url = await getDownloadUrl(solution.fileKey, 3600); // 1 hour
     res.json({ url, fileName: solution.fileName });
