@@ -69,6 +69,7 @@ function Nav({ user, logout }) {
         {user ? (
           <>
             <Link to="/dashboard" style={S.navLink}>My Assignments</Link>
+            <Link to="/my-purchases" style={S.navLink}>My Purchases</Link>
             {user.role === "admin" && <Link to="/admin" style={{ ...S.navLink, color: "#f5c842" }}>Admin</Link>}
             <span style={{ ...S.navLink, cursor: "pointer" }} onClick={() => { logout(); navigate("/"); }}>Logout ({user.name})</span>
           </>
@@ -481,6 +482,10 @@ function AdminDashboard({ user, token }) {
   return (
     <div style={S.container}>
       <h1 style={S.h1}>🛠 Admin Dashboard</h1>
+      <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
+        <Link to="/admin/upload"><button style={S.btnPrimary}>+ Upload Solution</button></Link>
+        <Link to="/admin/manage"><button style={S.btnSecondary}>📋 Manage Library</button></Link>
+      </div>
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 24 }}>
@@ -563,6 +568,98 @@ function AdminDashboard({ user, token }) {
 
 // ── APP ───────────────────────────────────────────────────────
 // ── UPLOAD SOLUTION (admin) ───────────────────────────────────
+// ── MY PURCHASES (student view) ───────────────────────────────
+function MyPurchases({ user, token }) {
+  const [purchases, setPurchases] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [downloadingId, setDownloadingId] = useState(null);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) { navigate("/login"); return; }
+    setLoading(true);
+    axios.get(`${API}/payment/my-purchases`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => setPurchases(r.data || []))
+      .catch(() => setPurchases([]))
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  const handleDownload = async (solutionId) => {
+    setError("");
+    setDownloadingId(solutionId);
+    try {
+      const r = await axios.get(`${API}/solutions/${solutionId}/download`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      window.open(r.data.url, "_blank");
+    } catch (err) {
+      setError("Could not generate download link. Please try again.");
+    }
+    setDownloadingId(null);
+  };
+
+  const formatDate = (d) => {
+    if (!d) return "";
+    const date = new Date(d);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  return (
+    <div style={S.container}>
+      <h1 style={S.h1}>📥 My Purchases</h1>
+      <p style={{ color: "#666", marginBottom: 20 }}>
+        {purchases.length === 0
+          ? "Your purchased solutions will appear here."
+          : `You've purchased ${purchases.length} solution${purchases.length === 1 ? "" : "s"}. Click Download to get the file again anytime.`}
+      </p>
+
+      {error && <div style={{ background: "#fee", color: "#b00", padding: 10, borderRadius: 4, marginBottom: 12, fontSize: 14 }}>{error}</div>}
+
+      {loading ? (
+        <div style={{ ...S.card, textAlign: "center" }}>Loading...</div>
+      ) : purchases.length === 0 ? (
+        <div style={{ ...S.card, textAlign: "center" }}>
+          <p style={{ color: "#666", marginBottom: 10 }}>No purchases yet.</p>
+          <Link to="/library"><button style={S.btnPrimary}>Browse Library</button></Link>
+        </div>
+      ) : (
+        purchases.map(p => {
+          const sol = p.solutionId;
+          if (!sol) return null;
+          return (
+            <div key={p._id} style={S.card}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6, flexWrap: "wrap" }}>
+                    <span style={{ background: "#1a3a5c", color: "#f5c842", padding: "2px 10px", borderRadius: 4, fontSize: 12, fontWeight: 600 }}>{sol.subject}</span>
+                    {sol.classCode && <span style={{ color: "#888", fontSize: 13 }}>{sol.classCode}</span>}
+                    {sol.week && <span style={{ color: "#888", fontSize: 13 }}>· {sol.week}</span>}
+                    <span style={{ background: "#2a8c4a", color: "#fff", padding: "2px 10px", borderRadius: 4, fontSize: 11, fontWeight: 600 }}>✓ Purchased</span>
+                  </div>
+                  <h3 style={{ fontFamily: "Georgia, serif", fontSize: 18, color: "#1a3a5c", margin: "0 0 6px 0" }}>{sol.title}</h3>
+                  <p style={{ color: "#888", fontSize: 13, margin: 0 }}>
+                    Purchased {formatDate(p.completedAt)} · ${p.amount} {p.currency}
+                  </p>
+                </div>
+                <div style={{ flexShrink: 0 }}>
+                  <button
+                    onClick={() => handleDownload(sol._id)}
+                    disabled={downloadingId === sol._id}
+                    style={{ ...S.btnPrimary, padding: "10px 20px", fontSize: 14 }}
+                  >
+                    {downloadingId === sol._id ? "Loading..." : "📥 Download"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
 // ── PUBLIC LIBRARY ────────────────────────────────────────────
 function Library() {
   const [solutions, setSolutions] = useState([]);
@@ -837,6 +934,189 @@ function SolutionDetail({ user, token }) {
   );
 }
 
+// ── ADMIN MANAGE LIBRARY ──────────────────────────────────────
+function AdminManageLibrary({ user, token }) {
+  const [solutions, setSolutions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(null); // solution being edited (or null)
+  const [editForm, setEditForm] = useState({});
+  const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token || user?.role !== "admin") { navigate("/"); return; }
+    loadAll();
+  }, [token]);
+
+  const loadAll = () => {
+    setLoading(true);
+    axios.get(`${API}/solutions?limit=200`)
+      .then(r => setSolutions(r.data.solutions || []))
+      .catch(() => setSolutions([]))
+      .finally(() => setLoading(false));
+  };
+
+  const startEdit = (sol) => {
+    setEditing(sol._id);
+    setEditForm({
+      title: sol.title,
+      subject: sol.subject,
+      classCode: sol.classCode || "",
+      week: sol.week || "",
+      description: sol.description,
+      keywords: (sol.keywords || []).join(", "),
+      price: sol.price
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setEditForm({});
+  };
+
+  const saveEdit = async () => {
+    if (!editForm.title || !editForm.description || !editForm.price) {
+      return alert("Title, description, and price are required");
+    }
+    setSaving(true);
+    try {
+      await axios.put(`${API}/solutions/${editing}`, editForm, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      cancelEdit();
+      loadAll();
+    } catch (err) {
+      alert("Update failed: " + (err.response?.data?.message || err.message));
+    }
+    setSaving(false);
+  };
+
+  const doDelete = async (id) => {
+    setDeletingId(id);
+    try {
+      await axios.delete(`${API}/solutions/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setConfirmDelete(null);
+      loadAll();
+    } catch (err) {
+      alert("Delete failed: " + (err.response?.data?.message || err.message));
+    }
+    setDeletingId(null);
+  };
+
+  const formatDate = (d) => {
+    if (!d) return "";
+    const date = new Date(d);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  return (
+    <div style={S.container}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, flexWrap: "wrap", gap: 10 }}>
+        <h1 style={{ ...S.h1, marginBottom: 0 }}>📋 Manage Library</h1>
+        <Link to="/admin/upload"><button style={S.btnPrimary}>+ Upload New Solution</button></Link>
+      </div>
+      <p style={{ color: "#666", marginBottom: 20 }}>
+        {solutions.length} solution{solutions.length === 1 ? "" : "s"} in library. Click Edit to update details, or Delete to remove permanently.
+      </p>
+
+      {loading ? (
+        <div style={{ ...S.card, textAlign: "center" }}>Loading...</div>
+      ) : solutions.length === 0 ? (
+        <div style={{ ...S.card, textAlign: "center" }}>
+          <p style={{ color: "#666", marginBottom: 10 }}>No solutions uploaded yet.</p>
+          <Link to="/admin/upload"><button style={S.btnPrimary}>Upload Your First Solution</button></Link>
+        </div>
+      ) : (
+        solutions.map(sol => (
+          <div key={sol._id} style={S.card}>
+            {editing === sol._id ? (
+              // EDIT MODE — form
+              <div>
+                <label style={S.label}>Title *</label>
+                <input style={S.input} value={editForm.title} onChange={e => setEditForm({ ...editForm, title: e.target.value })} />
+
+                <label style={S.label}>Subject *</label>
+                <select style={S.input} value={editForm.subject} onChange={e => setEditForm({ ...editForm, subject: e.target.value })}>
+                  {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+
+                <div style={{ display: "flex", gap: 12 }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={S.label}>Class Code</label>
+                    <input style={S.input} value={editForm.classCode} onChange={e => setEditForm({ ...editForm, classCode: e.target.value })} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={S.label}>Week</label>
+                    <input style={S.input} value={editForm.week} onChange={e => setEditForm({ ...editForm, week: e.target.value })} />
+                  </div>
+                </div>
+
+                <label style={S.label}>Description *</label>
+                <textarea style={{ ...S.input, minHeight: 80 }} value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} />
+
+                <label style={S.label}>Keywords (comma separated)</label>
+                <input style={S.input} value={editForm.keywords} onChange={e => setEditForm({ ...editForm, keywords: e.target.value })} />
+
+                <label style={S.label}>Price (USD) *</label>
+                <input style={S.input} type="number" step="0.01" min="0" value={editForm.price} onChange={e => setEditForm({ ...editForm, price: e.target.value })} />
+
+                <div style={{ display: "flex", gap: 10, marginTop: 14 }}>
+                  <button onClick={saveEdit} disabled={saving} style={{ ...S.btnPrimary, flex: 1 }}>
+                    {saving ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button onClick={cancelEdit} style={{ ...S.btnSecondary, flex: 1 }}>Cancel</button>
+                </div>
+              </div>
+            ) : confirmDelete === sol._id ? (
+              // DELETE CONFIRMATION
+              <div>
+                <p style={{ color: "#b00", fontWeight: 600, marginBottom: 8 }}>⚠️ Delete "{sol.title}"?</p>
+                <p style={{ color: "#666", fontSize: 14, marginBottom: 14 }}>
+                  This will permanently delete the file from storage and the record from the database. Students who already purchased it will lose access. This cannot be undone.
+                </p>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <button onClick={() => doDelete(sol._id)} disabled={deletingId === sol._id} style={{ ...S.btnPrimary, background: "#b00", flex: 1 }}>
+                    {deletingId === sol._id ? "Deleting..." : "Yes, Delete"}
+                  </button>
+                  <button onClick={() => setConfirmDelete(null)} style={{ ...S.btnSecondary, flex: 1 }}>Cancel</button>
+                </div>
+              </div>
+            ) : (
+              // VIEW MODE — list row
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16, flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6, flexWrap: "wrap" }}>
+                    <span style={{ background: "#1a3a5c", color: "#f5c842", padding: "2px 10px", borderRadius: 4, fontSize: 12, fontWeight: 600 }}>{sol.subject}</span>
+                    {sol.classCode && <span style={{ color: "#888", fontSize: 13 }}>{sol.classCode}</span>}
+                    {sol.week && <span style={{ color: "#888", fontSize: 13 }}>· {sol.week}</span>}
+                    <span style={{ color: "#888", fontSize: 13 }}>· {formatDate(sol.createdAt)}</span>
+                  </div>
+                  <h3 style={{ fontFamily: "Georgia, serif", fontSize: 18, color: "#1a3a5c", margin: "0 0 6px 0" }}>{sol.title}</h3>
+                  <p style={{ color: "#666", fontSize: 13, margin: "0 0 4px 0" }}>📄 {sol.fileName}</p>
+                  <p style={{ color: "#555", fontSize: 14, margin: 0, lineHeight: 1.5, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                    {sol.description}
+                  </p>
+                </div>
+                <div style={{ textAlign: "right", flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: "#1a3a5c" }}>${sol.price}</div>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button onClick={() => startEdit(sol)} style={{ ...S.btnSecondary, padding: "6px 14px", fontSize: 13 }}>Edit</button>
+                    <button onClick={() => setConfirmDelete(sol._id)} style={{ ...S.btnSecondary, padding: "6px 14px", fontSize: 13, color: "#b00", borderColor: "#b00" }}>Delete</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
 // ── UPLOAD SOLUTION (admin) ───────────────────────────────────
 function UploadSolution({ user, token }) {
   const [form, setForm] = useState({ title: "", subject: "Business", classCode: "", week: "", description: "", keywords: "", price: "" });
@@ -947,7 +1227,9 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard user={user} token={token} />} />
           <Route path="/admin" element={<AdminDashboard user={user} token={token} />} />
           <Route path="/admin/upload" element={<UploadSolution user={user} token={token} />} />
+          <Route path="/admin/manage" element={<AdminManageLibrary user={user} token={token} />} />
           <Route path="/library" element={<Library />} />
+          <Route path="/my-purchases" element={<MyPurchases user={user} token={token} />} />
           <Route path="/library/:id" element={<SolutionDetail user={user} token={token} />} />
         </Routes>
       </div>
