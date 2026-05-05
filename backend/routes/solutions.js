@@ -115,6 +115,32 @@ router.post('/', authMiddleware, isAdmin, upload.single('file'), async (req, res
   }
 });
 
+// PUT /api/solutions/:id — admin updates solution metadata (not the file)
+router.put('/:id', authMiddleware, isAdmin, async (req, res) => {
+  try {
+    const { title, subject, classCode, week, description, keywords, price } = req.body;
+    const update = {};
+    if (title !== undefined) update.title = title;
+    if (subject !== undefined) update.subject = subject;
+    if (classCode !== undefined) update.classCode = classCode || null;
+    if (week !== undefined) update.week = week || null;
+    if (description !== undefined) update.description = description;
+    if (price !== undefined) update.price = parseFloat(price);
+    if (keywords !== undefined) {
+      update.keywords = typeof keywords === 'string'
+        ? keywords.split(',').map(k => k.trim()).filter(Boolean)
+        : keywords;
+    }
+
+    const solution = await Solution.findByIdAndUpdate(req.params.id, update, { new: true });
+    if (!solution) return res.status(404).json({ message: 'Solution not found' });
+    res.json({ success: true, solution });
+  } catch (err) {
+    console.error('Solution update error:', err);
+    res.status(500).json({ message: 'Error updating solution' });
+  }
+});
+
 // GET /api/solutions/:id/download — admin OR paid users get signed download URL
 router.get('/:id/download', authMiddleware, async (req, res) => {
   try {
