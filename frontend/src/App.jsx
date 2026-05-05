@@ -2,9 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import { io } from "socket.io-client";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const API = "https://ehomeworkmarket-production.up.railway.app/api";
 const SOCKET_URL = "https://ehomeworkmarket-production.up.railway.app";
+const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
 
 const subjects = ["Nursing","Business","Psychology","Computer Science","Accounting","Statistics","Marketing","History","Economics","Law","Biology","English"];
 
@@ -63,6 +65,7 @@ function Nav({ user, logout }) {
     <nav style={S.nav}>
       <Link to="/" style={S.navBrand}>📚 eHomeworkMarket</Link>
       <div>
+        <Link to="/library" style={S.navLink}>Library</Link>
         {user ? (
           <>
             <Link to="/dashboard" style={S.navLink}>My Assignments</Link>
@@ -559,10 +562,380 @@ function AdminDashboard({ user, token }) {
 }
 
 // ── APP ───────────────────────────────────────────────────────
+// ── UPLOAD SOLUTION (admin) ───────────────────────────────────
+// ── PUBLIC LIBRARY ────────────────────────────────────────────
+function Library() {
+  const [solutions, setSolutions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [subjectFilter, setSubjectFilter] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (search) params.append("q", search);
+    if (subjectFilter) params.append("subject", subjectFilter);
+    params.append("limit", "50");
+
+    axios.get(`${API}/solutions?${params.toString()}`)
+      .then(r => setSolutions(r.data.solutions || []))
+      .catch(() => setSolutions([]))
+      .finally(() => setLoading(false));
+  }, [search, subjectFilter]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput.trim());
+  };
+
+  const clearFilters = () => {
+    setSearch("");
+    setSearchInput("");
+    setSubjectFilter("");
+  };
+
+  return (
+    <div style={S.container}>
+      <h1 style={S.h1}>📚 Solution Library</h1>
+      <p style={{ color: "#666", marginBottom: 20 }}>
+        Browse readymade solutions across subjects. Find what you need, pay, and download instantly.
+      </p>
+
+      <div style={S.card}>
+        <form onSubmit={handleSearch} style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap" }}>
+          <input
+            style={{ ...S.input, flex: "2 1 250px", marginBottom: 0 }}
+            placeholder="Search by class code, subject, or keyword (e.g. BUS375, leadership)"
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+          />
+          <select
+            style={{ ...S.input, flex: "1 1 150px", marginBottom: 0 }}
+            value={subjectFilter}
+            onChange={e => setSubjectFilter(e.target.value)}
+          >
+            <option value="">All Subjects</option>
+            {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+          <button type="submit" style={{ ...S.btnPrimary, marginBottom: 0 }}>Search</button>
+          {(search || subjectFilter) && (
+            <button type="button" onClick={clearFilters} style={{ ...S.btnSecondary, marginBottom: 0 }}>Clear</button>
+          )}
+        </form>
+
+        {search || subjectFilter ? (
+          <p style={{ color: "#666", fontSize: 14, margin: 0 }}>
+            Showing results {search && <>for "<b>{search}</b>"</>}
+            {search && subjectFilter && " "}
+            {subjectFilter && <>in <b>{subjectFilter}</b></>}
+            {" "}— <b>{solutions.length}</b> found
+          </p>
+        ) : (
+          <p style={{ color: "#666", fontSize: 14, margin: 0 }}>{solutions.length} solutions available</p>
+        )}
+      </div>
+
+      {loading ? (
+        <div style={{ ...S.card, textAlign: "center" }}>Loading...</div>
+      ) : solutions.length === 0 ? (
+        <div style={{ ...S.card, textAlign: "center" }}>
+          <p style={{ color: "#666", marginBottom: 8 }}>No solutions found.</p>
+          {(search || subjectFilter) && (
+            <button onClick={clearFilters} style={S.btnSecondary}>Clear filters</button>
+          )}
+        </div>
+      ) : (
+        solutions.map(sol => (
+          <div
+            key={sol._id}
+            style={{ ...S.card, cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}
+            onClick={() => navigate(`/library/${sol._id}`)}
+          >
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 6, flexWrap: "wrap" }}>
+                <span style={{ background: "#1a3a5c", color: "#f5c842", padding: "2px 10px", borderRadius: 4, fontSize: 12, fontWeight: 600 }}>{sol.subject}</span>
+                {sol.classCode && <span style={{ color: "#888", fontSize: 13 }}>{sol.classCode}</span>}
+                {sol.week && <span style={{ color: "#888", fontSize: 13 }}>· {sol.week}</span>}
+              </div>
+              <h3 style={{ fontFamily: "Georgia, serif", fontSize: 18, color: "#1a3a5c", margin: "0 0 6px 0" }}>{sol.title}</h3>
+              <p style={{ color: "#555", fontSize: 14, margin: 0, lineHeight: 1.5, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
+                {sol.description}
+              </p>
+            </div>
+            <div style={{ textAlign: "right", flexShrink: 0 }}>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#1a3a5c" }}>${sol.price}</div>
+              <div style={{ fontSize: 12, color: "#888" }}>View →</div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+// ── SOLUTION DETAIL ───────────────────────────────────────────
+function SolutionDetail({ user, token }) {
+  const [solution, setSolution] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [owned, setOwned] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState("");
+  const navigate = useNavigate();
+  const id = window.location.pathname.split("/").pop();
+
+  useEffect(() => {
+    setLoading(true);
+    axios.get(`${API}/solutions/${id}`)
+      .then(r => setSolution(r.data))
+      .catch(() => setSolution(null))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  // Check if user owns this solution (only if logged in)
+  useEffect(() => {
+    if (!token || !solution) return;
+    axios.get(`${API}/payment/check/${solution._id}`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => setOwned(r.data.owned))
+      .catch(() => setOwned(false));
+  }, [token, solution]);
+
+  const handleDownload = async () => {
+    try {
+      const r = await axios.get(`${API}/solutions/${solution._id}/download`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setDownloadUrl(r.data.url);
+      window.open(r.data.url, "_blank");
+    } catch (err) {
+      setError("Could not generate download link. Please try again.");
+    }
+  };
+
+  if (loading) return <div style={S.container}><div style={S.card}>Loading...</div></div>;
+
+  if (!solution) {
+    return (
+      <div style={S.container}>
+        <div style={{ ...S.card, textAlign: "center" }}>
+          <p>Solution not found.</p>
+          <Link to="/library"><button style={S.btnPrimary}>← Back to Library</button></Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={S.container}>
+      <div style={{ marginBottom: 14 }}>
+        <Link to="/library" style={{ color: "#1a3a5c", fontSize: 14, fontFamily: "sans-serif", textDecoration: "none" }}>← Back to Library</Link>
+      </div>
+
+      <div style={S.card}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10, flexWrap: "wrap" }}>
+          <span style={{ background: "#1a3a5c", color: "#f5c842", padding: "3px 12px", borderRadius: 4, fontSize: 13, fontWeight: 600 }}>{solution.subject}</span>
+          {solution.classCode && <span style={{ color: "#888", fontSize: 14 }}>{solution.classCode}</span>}
+          {solution.week && <span style={{ color: "#888", fontSize: 14 }}>· {solution.week}</span>}
+        </div>
+
+        <h1 style={{ ...S.h1, marginBottom: 14 }}>{solution.title}</h1>
+
+        <div style={{ background: "#f9f7f1", padding: 16, borderRadius: 6, marginBottom: 18 }}>
+          <p style={{ color: "#333", fontSize: 15, lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap" }}>{solution.description}</p>
+        </div>
+
+        {solution.keywords && solution.keywords.length > 0 && (
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ fontSize: 13, color: "#888", marginBottom: 6 }}>Topics covered:</div>
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+              {solution.keywords.map(k => (
+                <span key={k} style={{ background: "#e8e3d5", color: "#1a3a5c", padding: "3px 10px", borderRadius: 12, fontSize: 12 }}>{k}</span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div style={{ borderTop: "1px solid #e0d8c8", paddingTop: 18 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+            <div>
+              <div style={{ fontSize: 13, color: "#888", marginBottom: 4 }}>Price</div>
+              <div style={{ fontSize: 32, fontWeight: 700, color: "#1a3a5c", fontFamily: "Georgia, serif" }}>${solution.price}</div>
+            </div>
+            {owned && <span style={{ background: "#2a8c4a", color: "#fff", padding: "6px 14px", borderRadius: 4, fontSize: 14, fontWeight: 600 }}>✓ Purchased</span>}
+          </div>
+
+          {error && <div style={{ background: "#fee", color: "#b00", padding: 10, borderRadius: 4, marginBottom: 12, fontSize: 14 }}>{error}</div>}
+          {success && <div style={{ background: "#efe", color: "#060", padding: 10, borderRadius: 4, marginBottom: 12, fontSize: 14 }}>{success}</div>}
+
+          {owned ? (
+            <button onClick={handleDownload} style={{ ...S.btnPrimary, width: "100%", fontSize: 16, padding: "12px 28px" }}>
+              📥 Download Solution
+            </button>
+          ) : !token ? (
+            <div>
+              <p style={{ color: "#666", marginBottom: 10 }}>Please log in or sign up to purchase this solution.</p>
+              <Link to="/login"><button style={{ ...S.btnPrimary, width: "100%", fontSize: 16, padding: "12px 28px" }}>Login to Buy →</button></Link>
+            </div>
+          ) : (
+            <div>
+              <p style={{ color: "#666", marginBottom: 10, fontSize: 14 }}>Pay securely via PayPal:</p>
+              <PayPalButtons
+                disabled={paying}
+                style={{ layout: "vertical", color: "blue", shape: "rect", label: "pay" }}
+                createOrder={async () => {
+                  setError("");
+                  setPaying(true);
+                  try {
+                    const r = await axios.post(
+                      `${API}/payment/create-order/${solution._id}`,
+                      {},
+                      { headers: { Authorization: `Bearer ${token}` } }
+                    );
+                    return r.data.orderId;
+                  } catch (err) {
+                    setPaying(false);
+                    if (err.response?.data?.alreadyOwned) {
+                      setOwned(true);
+                      setError("");
+                      throw new Error("Already owned");
+                    }
+                    setError(err.response?.data?.message || "Could not start payment");
+                    throw err;
+                  }
+                }}
+                onApprove={async (data) => {
+                  try {
+                    await axios.post(
+                      `${API}/payment/capture-order/${data.orderID}`,
+                      {},
+                      { headers: { Authorization: `Bearer ${token}` } }
+                    );
+                    setOwned(true);
+                    setSuccess("Payment successful! You can now download.");
+                    setPaying(false);
+                  } catch (err) {
+                    setPaying(false);
+                    setError("Payment captured but recording failed. Please contact support.");
+                  }
+                }}
+                onError={(err) => {
+                  setPaying(false);
+                  setError("PayPal error. Please try again.");
+                }}
+                onCancel={() => {
+                  setPaying(false);
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── UPLOAD SOLUTION (admin) ───────────────────────────────────
+function UploadSolution({ user, token }) {
+  const [form, setForm] = useState({ title: "", subject: "Business", classCode: "", week: "", description: "", keywords: "", price: "" });
+  const [file, setFile] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token || user?.role !== "admin") navigate("/");
+  }, [token]);
+
+  const update = (k, v) => setForm({ ...form, [k]: v });
+
+  const submit = async (e) => {
+    e.preventDefault();
+    if (!form.title || !form.description || !form.price || !file) {
+      return alert("Title, description, price, and file are required");
+    }
+    setSaving(true);
+    try {
+      const fd = new FormData();
+      Object.keys(form).forEach(k => fd.append(k, form[k]));
+      fd.append("file", file);
+      await axios.post(`${API}/solutions`, fd, { headers: { Authorization: `Bearer ${token}` } });
+      setSuccess(true);
+      setForm({ title: "", subject: "Business", classCode: "", week: "", description: "", keywords: "", price: "" });
+      setFile(null);
+      const fileInput = document.getElementById("upload-file-input");
+      if (fileInput) fileInput.value = "";
+    } catch (err) {
+      alert("Upload failed: " + (err.response?.data?.message || err.message));
+    }
+    setSaving(false);
+  };
+
+  if (success) {
+    return (
+      <div style={S.container}>
+        <div style={{ ...S.card, textAlign: "center" }}>
+          <div style={{ fontSize: 48, color: "#2a8c4a", marginBottom: 12 }}>✅</div>
+          <h2 style={S.h2}>Solution Uploaded!</h2>
+          <p>Your solution is now in the library.</p>
+          <button onClick={() => setSuccess(false)} style={{ ...S.btnPrimary, marginRight: 10 }}>Upload Another</button>
+          <button onClick={() => navigate("/admin")} style={S.btnSecondary}>Back to Admin</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={S.container}>
+      <h1 style={S.h1}>📚 Upload Solution to Library</h1>
+      <p style={{ color: "#666", marginBottom: 20 }}>Add a readymade solution that students can search and purchase.</p>
+      <form onSubmit={submit} style={S.card}>
+        <label style={S.label}>Title *</label>
+        <input style={S.input} value={form.title} onChange={e => update("title", e.target.value)} placeholder="e.g. BUS375 Week 8 Discussion Solution" required />
+
+        <label style={S.label}>Subject *</label>
+        <select style={S.input} value={form.subject} onChange={e => update("subject", e.target.value)} required>
+          {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+
+        <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ flex: 1 }}>
+            <label style={S.label}>Class Code</label>
+            <input style={S.input} value={form.classCode} onChange={e => update("classCode", e.target.value)} placeholder="e.g. BUS375" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={S.label}>Week</label>
+            <input style={S.input} value={form.week} onChange={e => update("week", e.target.value)} placeholder="e.g. Week 8" />
+          </div>
+        </div>
+
+        <label style={S.label}>Description *</label>
+        <textarea style={{ ...S.input, minHeight: 80 }} value={form.description} onChange={e => update("description", e.target.value)} placeholder="Brief preview shown to students before purchase" required />
+
+        <label style={S.label}>Keywords (comma separated)</label>
+        <input style={S.input} value={form.keywords} onChange={e => update("keywords", e.target.value)} placeholder="leadership, management, ethics" />
+
+        <label style={S.label}>Price (USD) *</label>
+        <input style={S.input} type="number" step="0.01" min="0" value={form.price} onChange={e => update("price", e.target.value)} placeholder="15" required />
+
+        <label style={S.label}>Solution File * (PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX — max 50MB)</label>
+        <input id="upload-file-input" style={S.input} type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx" onChange={e => setFile(e.target.files[0])} required />
+
+        <button type="submit" disabled={saving} style={{ ...S.btnPrimary, marginTop: 16, width: "100%" }}>
+          {saving ? "Uploading..." : "Upload Solution"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
 export default function App() {
   const { user, token, login, logout } = useAuth();
 
   return (
+    <PayPalScriptProvider options={{ "client-id": PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
     <BrowserRouter>
       <div style={S.page}>
         <Nav user={user} logout={logout} />
@@ -573,8 +946,12 @@ export default function App() {
           <Route path="/ask" element={<AskQuestion user={user} token={token} />} />
           <Route path="/dashboard" element={<Dashboard user={user} token={token} />} />
           <Route path="/admin" element={<AdminDashboard user={user} token={token} />} />
+          <Route path="/admin/upload" element={<UploadSolution user={user} token={token} />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/library/:id" element={<SolutionDetail user={user} token={token} />} />
         </Routes>
       </div>
     </BrowserRouter>
+    </PayPalScriptProvider>
   );
 }
