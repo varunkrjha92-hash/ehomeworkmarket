@@ -6,6 +6,8 @@ const solutionSchema = new mongoose.Schema({
   classCode: { type: String, default: null },
   week: { type: String, default: null },
   description: { type: String, required: true },
+  previewText: { type: String, default: '' },
+  pageCount: { type: Number, default: null },
   keywords: { type: [String], default: [] },
   price: { type: Number, required: true },
   fileKey: { type: String, required: true },

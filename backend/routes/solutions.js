@@ -69,7 +69,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/solutions — admin uploads new solution
 router.post('/', authMiddleware, isAdmin, upload.single('file'), async (req, res) => {
   try {
-    const { title, subject, classCode, week, description, keywords, price } = req.body;
+    const { title, subject, classCode, week, description, previewText, pageCount, keywords, price } = req.body;
 
     if (!title || !subject || !description || !price) {
       return res.status(400).json({ message: 'Title, subject, description, and price are required' });
@@ -99,6 +99,8 @@ router.post('/', authMiddleware, isAdmin, upload.single('file'), async (req, res
       classCode: classCode || null,
       week: week || null,
       description,
+      previewText: previewText || '',
+      pageCount: pageCount ? parseInt(pageCount) : null,
       keywords: keywordsArr,
       price: parseFloat(price),
       fileKey,
@@ -118,13 +120,15 @@ router.post('/', authMiddleware, isAdmin, upload.single('file'), async (req, res
 // PUT /api/solutions/:id — admin updates solution metadata (not the file)
 router.put('/:id', authMiddleware, isAdmin, async (req, res) => {
   try {
-    const { title, subject, classCode, week, description, keywords, price } = req.body;
+    const { title, subject, classCode, week, description, previewText, pageCount, keywords, price } = req.body;
     const update = {};
     if (title !== undefined) update.title = title;
     if (subject !== undefined) update.subject = subject;
     if (classCode !== undefined) update.classCode = classCode || null;
     if (week !== undefined) update.week = week || null;
     if (description !== undefined) update.description = description;
+    if (previewText !== undefined) update.previewText = previewText;
+    if (pageCount !== undefined) update.pageCount = pageCount ? parseInt(pageCount) : null;
     if (price !== undefined) update.price = parseFloat(price);
     if (keywords !== undefined) {
       update.keywords = typeof keywords === 'string'
