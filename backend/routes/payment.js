@@ -185,4 +185,39 @@ router.get('/check/:solutionId', authMiddleware, async (req, res) => {
   }
 });
 
+// GET /api/payment/admin/sales-summary — admin only
+// Returns total revenue, count, and recent purchases with buyer info
+router.get('/admin/sales-summary', authMiddleware, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin only' });
+
+    const completed = await Purchase.find({ status: 'completed' })
+      .populate('userId', 'name email')
+      .populate('solutionId', 'title subject classCode')
+      .sort({ completedAt: -1 });
+
+    const totalRevenue = completed.reduce((sum, p) => sum + (p.amount || 0), 0);
+    const totalSales = completed.length;
+
+    const byMonth = {};
+    completed.forEach(p => {
+      if (!p.completedAt) return;
+      const m = p.completedAt.toISOString().slice(0, 7);
+      if (!byMonth[m]) byMonth[m] = { count: 0, revenue: 0 };
+      byMonth[m].count += 1;
+      byMonth[m].revenue += p.amount || 0;
+    });
+
+    res.json({
+      totalRevenue: parseFloat(totalRevenue.toFixed(2)),
+      totalSales,
+      byMonth,
+      recent: completed.slice(0, 50)
+    });
+  } catch (err) {
+    console.error('Sales summary error:', err);
+    res.status(500).json({ message: 'Error fetching sales summary' });
+  }
+});
+
 module.exports = router;
