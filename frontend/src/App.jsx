@@ -47,6 +47,7 @@ const S = {
   btnPrimary: { background: "#1a3a5c", color: "#fff", border: "none", padding: "12px 28px", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "sans-serif", fontWeight: 600 },
   btnGold: { background: "#f5c842", color: "#1a3a5c", border: "none", padding: "12px 28px", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "sans-serif", fontWeight: 700 },
   btnSmall: { background: "#1a3a5c", color: "#fff", border: "none", padding: "7px 16px", borderRadius: 3, fontSize: 13, cursor: "pointer", fontFamily: "sans-serif" },
+  btnSecondary: { background: "transparent", color: "#1a3a5c", border: "2px solid #1a3a5c", padding: "10px 22px", borderRadius: 4, fontSize: 14, cursor: "pointer", fontFamily: "sans-serif", fontWeight: 600 },
   badge: (status) => {
     const colors = { pending: "#e8f0ff", in_progress: "#fff8e0", solved: "#e8ffe8", paid: "#e0ffe8" };
     const text = { pending: "#2244aa", in_progress: "#a07000", solved: "#1a7a1a", paid: "#0a5a0a" };
@@ -485,6 +486,7 @@ function AdminDashboard({ user, token }) {
       <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
         <Link to="/admin/upload"><button style={S.btnPrimary}>+ Upload Solution</button></Link>
         <Link to="/admin/manage"><button style={S.btnSecondary}>📋 Manage Library</button></Link>
+        <Link to="/admin/sales"><button style={S.btnSecondary}>📊 Sales Report</button></Link>
       </div>
 
       {/* Stats */}
@@ -934,6 +936,130 @@ function SolutionDetail({ user, token }) {
   );
 }
 
+// ── ADMIN SALES REPORT ────────────────────────────────────────
+function AdminSalesReport({ user, token }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token || user?.role !== "admin") { navigate("/"); return; }
+    setLoading(true);
+    axios.get(`${API}/payment/admin/sales-summary`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => setData(r.data))
+      .catch(() => setError("Could not load sales data"))
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  const formatDate = (d) => {
+    if (!d) return "";
+    const date = new Date(d);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  const formatMonth = (m) => {
+    if (!m) return "";
+    const [y, mo] = m.split("-");
+    const date = new Date(parseInt(y), parseInt(mo) - 1, 1);
+    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  };
+
+  if (loading) return <div style={S.container}><div style={S.card}>Loading sales data...</div></div>;
+  if (error) return <div style={S.container}><div style={{ ...S.card, color: "#b00" }}>{error}</div></div>;
+  if (!data) return null;
+
+  const avgSale = data.totalSales > 0 ? (data.totalRevenue / data.totalSales).toFixed(2) : "0.00";
+  const monthEntries = Object.entries(data.byMonth || {}).sort((a, b) => b[0].localeCompare(a[0]));
+
+  return (
+    <div style={S.container}>
+      <h1 style={S.h1}>📊 Sales Report</h1>
+      <p style={{ color: "#666", marginBottom: 20 }}>
+        Overview of all completed purchases on eHomeworkMarket.
+      </p>
+
+      {/* Stats row */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
+        <div style={{ background: "#fff", border: "1px solid #ddd", borderRadius: 6, padding: "20px", textAlign: "center" }}>
+          <div style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 700, color: "#1a3a5c" }}>${data.totalRevenue.toFixed(2)}</div>
+          <div style={{ fontFamily: "sans-serif", fontSize: 12, color: "#888", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 4 }}>Total Revenue</div>
+        </div>
+        <div style={{ background: "#fff", border: "1px solid #ddd", borderRadius: 6, padding: "20px", textAlign: "center" }}>
+          <div style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 700, color: "#1a3a5c" }}>{data.totalSales}</div>
+          <div style={{ fontFamily: "sans-serif", fontSize: 12, color: "#888", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 4 }}>Total Sales</div>
+        </div>
+        <div style={{ background: "#fff", border: "1px solid #ddd", borderRadius: 6, padding: "20px", textAlign: "center" }}>
+          <div style={{ fontFamily: "Georgia, serif", fontSize: 32, fontWeight: 700, color: "#1a3a5c" }}>${avgSale}</div>
+          <div style={{ fontFamily: "sans-serif", fontSize: 12, color: "#888", textTransform: "uppercase", letterSpacing: "0.08em", marginTop: 4 }}>Average Sale</div>
+        </div>
+      </div>
+
+      {/* Monthly breakdown */}
+      {monthEntries.length > 0 && (
+        <div style={{ ...S.card, marginBottom: 20 }}>
+          <h2 style={{ ...S.h2, fontSize: 18, marginBottom: 12 }}>Monthly Breakdown</h2>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: 14 }}>
+            <thead>
+              <tr style={{ borderBottom: "2px solid #ddd" }}>
+                <th style={{ textAlign: "left", padding: "8px 6px", color: "#666", fontWeight: 600 }}>Month</th>
+                <th style={{ textAlign: "right", padding: "8px 6px", color: "#666", fontWeight: 600 }}>Sales</th>
+                <th style={{ textAlign: "right", padding: "8px 6px", color: "#666", fontWeight: 600 }}>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              {monthEntries.map(([month, stats]) => (
+                <tr key={month} style={{ borderBottom: "1px solid #eee" }}>
+                  <td style={{ padding: "10px 6px", color: "#1a3a5c", fontWeight: 600 }}>{formatMonth(month)}</td>
+                  <td style={{ textAlign: "right", padding: "10px 6px" }}>{stats.count}</td>
+                  <td style={{ textAlign: "right", padding: "10px 6px", fontWeight: 600 }}>${stats.revenue.toFixed(2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Recent purchases */}
+      <div style={S.card}>
+        <h2 style={{ ...S.h2, fontSize: 18, marginBottom: 12 }}>Recent Purchases ({data.recent.length})</h2>
+        {data.recent.length === 0 ? (
+          <p style={{ color: "#666", textAlign: "center", padding: 20 }}>No purchases yet.</p>
+        ) : (
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "sans-serif", fontSize: 13 }}>
+              <thead>
+                <tr style={{ borderBottom: "2px solid #ddd" }}>
+                  <th style={{ textAlign: "left", padding: "8px 6px", color: "#666", fontWeight: 600 }}>Date</th>
+                  <th style={{ textAlign: "left", padding: "8px 6px", color: "#666", fontWeight: 600 }}>Buyer</th>
+                  <th style={{ textAlign: "left", padding: "8px 6px", color: "#666", fontWeight: 600 }}>Solution</th>
+                  <th style={{ textAlign: "right", padding: "8px 6px", color: "#666", fontWeight: 600 }}>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.recent.map(p => (
+                  <tr key={p._id} style={{ borderBottom: "1px solid #eee" }}>
+                    <td style={{ padding: "10px 6px", color: "#666" }}>{formatDate(p.completedAt)}</td>
+                    <td style={{ padding: "10px 6px" }}>
+                      <div style={{ color: "#1a3a5c", fontWeight: 600 }}>{p.userId?.name || "Unknown"}</div>
+                      <div style={{ color: "#888", fontSize: 11 }}>{p.userId?.email || "-"}</div>
+                    </td>
+                    <td style={{ padding: "10px 6px" }}>
+                      <div style={{ color: "#1a3a5c" }}>{p.solutionId?.title || "Deleted solution"}</div>
+                      {p.solutionId?.classCode && <div style={{ color: "#888", fontSize: 11 }}>{p.solutionId.classCode}</div>}
+                    </td>
+                    <td style={{ textAlign: "right", padding: "10px 6px", fontWeight: 600, color: "#1a3a5c" }}>${p.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ── ADMIN MANAGE LIBRARY ──────────────────────────────────────
 function AdminManageLibrary({ user, token }) {
   const [solutions, setSolutions] = useState([]);
@@ -1228,6 +1354,7 @@ export default function App() {
           <Route path="/admin" element={<AdminDashboard user={user} token={token} />} />
           <Route path="/admin/upload" element={<UploadSolution user={user} token={token} />} />
           <Route path="/admin/manage" element={<AdminManageLibrary user={user} token={token} />} />
+          <Route path="/admin/sales" element={<AdminSalesReport user={user} token={token} />} />
           <Route path="/library" element={<Library />} />
           <Route path="/my-purchases" element={<MyPurchases user={user} token={token} />} />
           <Route path="/library/:id" element={<SolutionDetail user={user} token={token} />} />
