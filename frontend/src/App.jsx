@@ -846,6 +846,26 @@ function SolutionDetail({ user, token }) {
           <p style={{ color: "#333", fontSize: 15, lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap" }}>{solution.description}</p>
         </div>
 
+        {solution.previewText && (
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <h3 style={{ fontFamily: "Georgia, serif", fontSize: 16, color: "#1a3a5c", margin: 0 }}>📄 Preview</h3>
+              {solution.pageCount && (
+                <span style={{ fontSize: 13, color: "#888" }}>
+                  Showing preview of {solution.pageCount} page{solution.pageCount === 1 ? "" : "s"}
+                </span>
+              )}
+            </div>
+            <div style={{ background: "#fff", border: "1px solid #e0d8c8", borderRadius: 6, padding: 16, position: "relative" }}>
+              <p style={{ color: "#333", fontSize: 14, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{solution.previewText}</p>
+              <div style={{ marginTop: 14, paddingTop: 14, borderTop: "2px dashed #e0d8c8", textAlign: "center" }}>
+                <div style={{ color: "#888", fontSize: 13, marginBottom: 4 }}>🔒 Rest of solution locked</div>
+                <div style={{ color: "#1a3a5c", fontWeight: 600, fontSize: 14 }}>Purchase to unlock the full {solution.pageCount ? `${solution.pageCount}-page ` : ""}solution</div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {solution.keywords && solution.keywords.length > 0 && (
           <div style={{ marginBottom: 18 }}>
             <div style={{ fontSize: 13, color: "#888", marginBottom: 6 }}>Topics covered:</div>
@@ -1084,7 +1104,7 @@ function AdminManageLibrary({ user, token }) {
       .finally(() => setLoading(false));
   };
 
-  const startEdit = (sol) => {
+const startEdit = (sol) => {
     setEditing(sol._id);
     setEditForm({
       title: sol.title,
@@ -1092,6 +1112,8 @@ function AdminManageLibrary({ user, token }) {
       classCode: sol.classCode || "",
       week: sol.week || "",
       description: sol.description,
+      previewText: sol.previewText || "",
+      pageCount: sol.pageCount || "",
       keywords: (sol.keywords || []).join(", "),
       price: sol.price
     });
@@ -1184,6 +1206,12 @@ function AdminManageLibrary({ user, token }) {
                 <label style={S.label}>Description *</label>
                 <textarea style={{ ...S.input, minHeight: 80 }} value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} />
 
+                <label style={S.label}>Preview Text</label>
+                <textarea style={{ ...S.input, minHeight: 80 }} value={editForm.previewText} onChange={e => setEditForm({ ...editForm, previewText: e.target.value })} placeholder="Public preview text shown to students" />
+
+                <label style={S.label}>Total Pages</label>
+                <input style={S.input} type="number" min="1" value={editForm.pageCount} onChange={e => setEditForm({ ...editForm, pageCount: e.target.value })} placeholder="e.g. 12" />
+
                 <label style={S.label}>Keywords (comma separated)</label>
                 <input style={S.input} value={editForm.keywords} onChange={e => setEditForm({ ...editForm, keywords: e.target.value })} />
 
@@ -1245,7 +1273,7 @@ function AdminManageLibrary({ user, token }) {
 
 // ── UPLOAD SOLUTION (admin) ───────────────────────────────────
 function UploadSolution({ user, token }) {
-  const [form, setForm] = useState({ title: "", subject: "Business", classCode: "", week: "", description: "", keywords: "", price: "" });
+  const [form, setForm] = useState({ title: "", subject: "Business", classCode: "", week: "", description: "", previewText: "", pageCount: "", keywords: "", price: "" });
   const [file, setFile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -1269,7 +1297,7 @@ function UploadSolution({ user, token }) {
       fd.append("file", file);
       await axios.post(`${API}/solutions`, fd, { headers: { Authorization: `Bearer ${token}` } });
       setSuccess(true);
-      setForm({ title: "", subject: "Business", classCode: "", week: "", description: "", keywords: "", price: "" });
+      setForm({ title: "", subject: "Business", classCode: "", week: "", description: "", previewText: "", pageCount: "", keywords: "", price: "" });
       setFile(null);
       const fileInput = document.getElementById("upload-file-input");
       if (fileInput) fileInput.value = "";
@@ -1319,6 +1347,18 @@ function UploadSolution({ user, token }) {
 
         <label style={S.label}>Description *</label>
         <textarea style={{ ...S.input, minHeight: 80 }} value={form.description} onChange={e => update("description", e.target.value)} placeholder="Brief preview shown to students before purchase" required />
+          <label style={S.label}>Preview Text</label>
+        <textarea style={{ ...S.input, minHeight: 80 }} value={form.previewText} onChange={e => update("previewText", e.target.value)} placeholder="A few lines from the solution shown publicly. For long solutions paste 2-3 paragraphs; for short solutions paste 3-4 lines only. Students see this as a 'taste' before purchasing." />
+
+        <div style={{ display: "flex", gap: 12 }}>
+          <div style={{ flex: 1 }}>
+            <label style={S.label}>Total Pages</label>
+            <input style={S.input} type="number" min="1" value={form.pageCount} onChange={e => update("pageCount", e.target.value)} placeholder="e.g. 12" />
+          </div>
+          <div style={{ flex: 1 }}>
+            
+          </div>
+        </div>
 
         <label style={S.label}>Keywords (comma separated)</label>
         <input style={S.input} value={form.keywords} onChange={e => update("keywords", e.target.value)} placeholder="leadership, management, ethics" />
