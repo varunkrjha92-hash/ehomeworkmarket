@@ -1,8 +1,14 @@
 const router = require('express').Router();
 const paypal = require('@paypal/checkout-server-sdk');
+const nodemailer = require('nodemailer');
 const Solution = require('../models/Solution');
 const Purchase = require('../models/Purchase');
+const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS }
+});
 
 // PayPal client setup
 function paypalClient() {
@@ -74,6 +80,71 @@ router.post('/capture-order/:orderId', authMiddleware, async (req, res) => {
       purchase.paypalCaptureId = capture.result.purchase_units[0].payments.captures[0].id;
       purchase.completedAt = new Date();
       await purchase.save();
+
+      // Send confirmation emails (best-effort; don't fail the request if email fails)
+      try {
+        const solution = await Solution.findById(purchase.solutionId);
+        const buyer = await User.findById(req.user.id);
+        const downloadLink = `${process.env.CLIENT_URL || 'https://ehomeworkmarket.vercel.app'}/library/${solution._id}`;
+
+        // Email to student
+        if (buyer?.email) {
+          await transporter.sendMail({
+            from: `"eHomeworkMarket" <${process.env.GMAIL_USER}>`,
+            to: buyer.email,
+            subject: `Purchase Confirmation: ${solution.title}`,
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+                <div style="background: #1a3a5c; padding: 20px; text-align: center;">
+                  <h1 style="color: #f5c842; margin: 0; font-family: Georgia, serif;">eHomeworkMarket</h1>
+                </div>
+                <div style="padding: 24px; background: #fafafa;">
+                  <h2 style="color: #1a3a5c;">Thank you for your purchase!</h2>
+                  <p>Hi ${buyer.name || 'there'},</p>
+                  <p>Your payment has been received and your solution is ready to download.</p>
+                  <div style="background: #fff; padding: 16px; border-radius: 6px; margin: 16px 0; border-left: 4px solid #f5c842;">
+                    <p style="margin: 0 0 6px 0;"><strong>Solution:</strong> ${solution.title}</p>
+                    ${solution.classCode ? `<p style="margin: 0 0 6px 0;"><strong>Class:</strong> ${solution.classCode}</p>` : ''}
+                    <p style="margin: 0 0 6px 0;"><strong>Amount:</strong> $${purchase.amount} ${purchase.currency}</p>
+                    <p style="margin: 0;"><strong>Order ID:</strong> ${purchase.paypalOrderId}</p>
+                  </div>
+                  <p style="text-align: center; margin: 24px 0;">
+                    <a href="${downloadLink}" style="background: #1a3a5c; color: #f5c842; padding: 12px 28px; text-decoration: none; border-radius: 4px; font-weight: bold;">Download Now →</a>
+                  </p>
+                  <p style="font-size: 13px; color: #666;">You can also re-download anytime from "My Purchases" in your account.</p>
+                  <hr style="border: none; border-top: 1px solid #ddd; margin: 24px 0;" />
+                  <p style="font-size: 12px; color: #888;">Questions? Reply to this email or contact ${process.env.GMAIL_USER}.</p>
+                </div>
+              </div>
+            `
+          });
+        }
+
+        // Email to admin (sale notification)
+        await transporter.sendMail({
+          from: `"eHomeworkMarket" <${process.env.GMAIL_USER}>`,
+          to: process.env.ADMIN_EMAIL || process.env.GMAIL_USER,
+          subject: `💰 New Sale: ${solution.title} ($${purchase.amount})`,
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+              <h2 style="color: #1a3a5c;">New Sale Notification</h2>
+              <table style="border-collapse: collapse; width: 100%;">
+                <tr><td style="padding: 6px 0;"><strong>Buyer:</strong></td><td>${buyer?.name || 'Unknown'} (${buyer?.email || 'no email'})</td></tr>
+                <tr><td style="padding: 6px 0;"><strong>Solution:</strong></td><td>${solution.title}</td></tr>
+                <tr><td style="padding: 6px 0;"><strong>Class Code:</strong></td><td>${solution.classCode || '-'}</td></tr>
+                <tr><td style="padding: 6px 0;"><strong>Subject:</strong></td><td>${solution.subject}</td></tr>
+                <tr><td style="padding: 6px 0;"><strong>Amount:</strong></td><td>$${purchase.amount} ${purchase.currency}</td></tr>
+                <tr><td style="padding: 6px 0;"><strong>PayPal Order:</strong></td><td>${purchase.paypalOrderId}</td></tr>
+                <tr><td style="padding: 6px 0;"><strong>Capture ID:</strong></td><td>${purchase.paypalCaptureId}</td></tr>
+                <tr><td style="padding: 6px 0;"><strong>Date:</strong></td><td>${purchase.completedAt.toISOString()}</td></tr>
+              </table>
+            </div>
+          `
+        });
+      } catch (emailErr) {
+        console.error('Email sending failed (purchase still recorded):', emailErr);
+      }
+
       res.json({ success: true, purchaseId: purchase._id });
     } else {
       purchase.status = 'failed';
