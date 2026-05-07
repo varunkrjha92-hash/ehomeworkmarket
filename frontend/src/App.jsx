@@ -88,6 +88,15 @@ function Nav({ user, logout }) {
 
 // ── HOME ─────────────────────────────────────────────────────
 function Home() {
+  const [recentSolutions, setRecentSolutions] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get(`${API}/solutions?limit=6`)
+      .then(r => setRecentSolutions(r.data.solutions || []))
+      .catch(() => setRecentSolutions([]));
+  }, []);
+
   return (
     <div>
       {/* Hero */}
@@ -124,6 +133,48 @@ function Home() {
         </div>
       </div>
 
+      {/* Recently Added Solutions */}
+      {recentSolutions.length > 0 && (
+        <div style={{ background: "#faf7f0", padding: "52px 24px" }}>
+          <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <p style={{ fontFamily: "sans-serif", fontSize: 12, color: "#888", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 8 }}>From the Library</p>
+              <h2 style={{ ...S.h2, fontSize: 28, marginBottom: 8 }}>Recently Added Solutions</h2>
+              <p style={{ fontFamily: "sans-serif", fontSize: 14, color: "#666" }}>Browse our latest study help — solutions across {subjects.length} subjects</p>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+              {recentSolutions.map(sol => (
+                <div
+                  key={sol._id}
+                  onClick={() => navigate(`/library/${sol._id}`)}
+                  style={{ background: "#fff", border: "1px solid #e0d8c8", borderRadius: 6, padding: 20, cursor: "pointer", transition: "transform 0.15s ease, box-shadow 0.15s ease" }}
+                  onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(26, 58, 92, 0.1)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+                >
+                  <div style={{ display: "flex", gap: 6, alignItems: "center", marginBottom: 10, flexWrap: "wrap" }}>
+                    <span style={{ background: "#1a3a5c", color: "#f5c842", padding: "2px 10px", borderRadius: 4, fontSize: 11, fontWeight: 600 }}>{sol.subject}</span>
+                    {sol.classCode && <span style={{ color: "#888", fontSize: 12 }}>{sol.classCode}</span>}
+                  </div>
+                  <h3 style={{ fontFamily: "Georgia, serif", fontSize: 16, color: "#1a3a5c", margin: "0 0 8px 0", lineHeight: 1.3, minHeight: 42, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{sol.title}</h3>
+                  <p style={{ color: "#666", fontSize: 13, margin: 0, lineHeight: 1.5, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", minHeight: 38 }}>{sol.description}</p>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14, paddingTop: 12, borderTop: "1px solid #f0e8d8" }}>
+                    <span style={{ fontSize: 18, fontWeight: 700, color: "#1a3a5c", fontFamily: "Georgia, serif" }}>${sol.price}</span>
+                    <span style={{ fontSize: 12, color: "#888" }}>View →</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: 32 }}>
+              <Link to="/library">
+                <button style={{ ...S.btnPrimary, fontSize: 15, padding: "12px 32px" }}>Browse Full Library →</button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Subjects */}
       <div style={{ background: "#1a3a5c", padding: "36px 24px", textAlign: "center" }}>
         <p style={{ color: "#cce0f5", fontFamily: "sans-serif", fontSize: 14, marginBottom: 16, letterSpacing: "0.1em", textTransform: "uppercase" }}>Subjects We Cover</p>
@@ -845,26 +896,7 @@ function SolutionDetail({ user, token }) {
         <div style={{ background: "#f9f7f1", padding: 16, borderRadius: 6, marginBottom: 18 }}>
           <p style={{ color: "#333", fontSize: 15, lineHeight: 1.6, margin: 0, whiteSpace: "pre-wrap" }}>{solution.description}</p>
         </div>
-
-        {solution.previewText && (
-          <div style={{ marginBottom: 18 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <h3 style={{ fontFamily: "Georgia, serif", fontSize: 16, color: "#1a3a5c", margin: 0 }}>📄 Preview</h3>
-              {solution.pageCount && (
-                <span style={{ fontSize: 13, color: "#888" }}>
-                  Showing preview of {solution.pageCount} page{solution.pageCount === 1 ? "" : "s"}
-                </span>
-              )}
-            </div>
-            <div style={{ background: "#fff", border: "1px solid #e0d8c8", borderRadius: 6, padding: 16, position: "relative" }}>
-              <p style={{ color: "#333", fontSize: 14, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap" }}>{solution.previewText}</p>
-              <div style={{ marginTop: 14, paddingTop: 14, borderTop: "2px dashed #e0d8c8", textAlign: "center" }}>
-                <div style={{ color: "#888", fontSize: 13, marginBottom: 4 }}>🔒 Rest of solution locked</div>
-                <div style={{ color: "#1a3a5c", fontWeight: 600, fontSize: 14 }}>Purchase to unlock the full {solution.pageCount ? `${solution.pageCount}-page ` : ""}solution</div>
-              </div>
-            </div>
-          </div>
-        )}
+        
 
         {solution.keywords && solution.keywords.length > 0 && (
           <div style={{ marginBottom: 18 }}>
