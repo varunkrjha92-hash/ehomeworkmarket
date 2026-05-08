@@ -32,10 +32,10 @@ function useAuth() {
 
 // ── STYLES ────────────────────────────────────────────────────
 const S = {
-  page: { minHeight: "100vh", background: "#f5f3ee", fontFamily: "'Georgia', serif" },
-  nav: { background: "#1a3a5c", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 60 },
-  navBrand: { color: "#f5c842", fontSize: 20, fontWeight: 700, textDecoration: "none" },
-  navLink: { color: "#cce0f5", fontSize: 14, textDecoration: "none", marginLeft: 20, fontFamily: "sans-serif" },
+  page: { minHeight: "100vh", background: "#faf6ee", fontFamily: "'Georgia', serif" },
+  nav: { background: "#0f3540", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 60 },
+  navBrand: { color: "#c9a961", fontSize: 20, fontWeight: 700, textDecoration: "none" },
+  navLink: { color: "#a8c4cc", fontSize: 14, textDecoration: "none", marginLeft: 20, fontFamily: "sans-serif" },
   container: { maxWidth: 900, margin: "0 auto", padding: "32px 20px" },
   card: { background: "#fff", border: "1px solid #d8d0c4", borderRadius: 6, padding: 28, marginBottom: 20 },
   h1: { fontFamily: "Georgia, serif", fontSize: 28, color: "#1a3a5c", marginBottom: 8 },
@@ -100,33 +100,101 @@ function Home() {
   return (
     <div>
       {/* Hero */}
-      <div style={{ background: "#1a3a5c", color: "#fff", padding: "64px 24px", textAlign: "center" }}>
-        <h1 style={{ fontFamily: "Georgia", fontSize: 40, color: "#f5c842", marginBottom: 12 }}>Get Help With Your Assignment</h1>
-        <p style={{ fontSize: 18, color: "#cce0f5", maxWidth: 600, margin: "0 auto 28px", fontFamily: "sans-serif" }}>
-          Post your question, get expert help, and <strong style={{ color: "#f5c842" }}>pay only after you're satisfied</strong>.
-        </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <Link to="/ask"><button style={S.btnGold}>Post Your Question →</button></Link>
-          <Link to="/register"><button style={{ ...S.btnPrimary, background: "transparent", border: "2px solid #cce0f5" }}>Create Free Account</button></Link>
+      <div style={{
+        background: "linear-gradient(135deg, #0f3540 0%, #0a2a32 100%)",
+        color: "#f0e3c4",
+        padding: "100px 24px 90px",
+        position: "relative",
+        overflow: "hidden"
+      }}>
+        <div style={{
+          position: "absolute",
+          top: -100,
+          right: -100,
+          width: 400,
+          height: 400,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(201,169,97,0.06) 0%, transparent 70%)",
+          pointerEvents: "none"
+        }} />
+        <div style={{
+          position: "absolute",
+          bottom: -150,
+          left: -100,
+          width: 500,
+          height: 500,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(26,90,106,0.4) 0%, transparent 70%)",
+          pointerEvents: "none"
+        }} />
+
+        <div style={{ maxWidth: 1000, margin: "0 auto", position: "relative", zIndex: 1, textAlign: "center" }}>
+          <p style={{ fontFamily: "sans-serif", fontSize: 12, color: "#c9a961", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 24, fontWeight: 600 }}>For College Students</p>
+
+          <h1 style={{ fontFamily: "Georgia, serif", fontSize: 64, fontWeight: 700, color: "#f0e3c4", margin: "0 0 12px 0", letterSpacing: "-1.5px", lineHeight: 1.05 }}>
+            Tutoring,
+          </h1>
+          <h1 style={{ fontFamily: "Georgia, serif", fontSize: 64, fontWeight: 700, color: "#f0e3c4", margin: "0 0 12px 0", letterSpacing: "-1.5px", lineHeight: 1.05 }}>
+            done <em style={{ color: "#c9a961", fontStyle: "italic" }}>thoughtfully.</em>
+          </h1>
+
+          <div style={{ width: 60, height: 2, background: "#c9a961", margin: "32px auto" }} />
+
+          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, color: "#a8c4cc", maxWidth: 540, margin: "0 auto 36px", lineHeight: 1.6 }}>
+            Real help. Real experts. Browse readymade solutions or post your own assignment.
+          </p>
+
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
+            <Link to="/ask" style={{ textDecoration: "none" }}>
+              <button style={{ background: "#c9a961", color: "#0f3540", border: "none", padding: "14px 32px", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: "0.3px" }}>Post Your Assignment →</button>
+            </Link>
+            <Link to="/library" style={{ textDecoration: "none" }}>
+              <button style={{ background: "transparent", color: "#c9a961", border: "1px solid #c9a961", padding: "14px 32px", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "Georgia, serif", fontWeight: 600, letterSpacing: "0.3px" }}>Browse Library</button>
+            </Link>
+          </div>
+
+          <div style={{ display: "flex", justifyContent: "center", gap: 50, flexWrap: "wrap", paddingTop: 24, borderTop: "1px solid rgba(201,169,97,0.2)", maxWidth: 600, margin: "0 auto" }}>
+            <div>
+              <div style={{ fontFamily: "sans-serif", fontSize: 11, color: "#7a9aa2", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600, marginBottom: 4 }}>From</div>
+              <div style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#f0e3c4", fontWeight: 700 }}>$10</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "sans-serif", fontSize: 11, color: "#7a9aa2", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600, marginBottom: 4 }}>Subjects</div>
+              <div style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#f0e3c4", fontWeight: 700 }}>12+</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "sans-serif", fontSize: 11, color: "#7a9aa2", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600, marginBottom: 4 }}>Delivery</div>
+              <div style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#f0e3c4", fontWeight: 700 }}>Within 1 hr</div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* How it works */}
-      <div style={{ background: "#f5f3ee", padding: "52px 24px" }}>
-        <div style={{ maxWidth: 800, margin: "0 auto", textAlign: "center" }}>
-          <h2 style={{ ...S.h2, textAlign: "center", fontSize: 28 }}>How It Works</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 20, marginTop: 28 }}>
+      <div style={{ background: "#faf6ee", padding: "100px 24px 90px" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <div style={{ textAlign: "center", marginBottom: 64 }}>
+            <p style={{ fontFamily: "sans-serif", fontSize: 12, color: "#c9a961", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 }}>How It Works</p>
+            <h2 style={{ fontFamily: "Georgia, serif", fontSize: 38, fontWeight: 700, color: "#0f3540", margin: "0 0 14px 0", letterSpacing: "-0.5px" }}>
+              Three steps. <em style={{ color: "#c9a961" }}>That's it.</em>
+            </h2>
+            <p style={{ fontFamily: "Georgia, serif", fontSize: 17, color: "#5a6670", maxWidth: 540, margin: "0 auto", lineHeight: 1.5 }}>
+              From posting your question to downloading the solution — simple, direct, and built for students.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 28 }}>
             {[
-              { n: "1", icon: "📋", t: "Post Assignment", d: "Describe your question, set your budget & deadline" },
-              { n: "2", icon: "✍️", t: "Expert Assigned", d: "A verified tutor picks up your assignment" },
-              { n: "3", icon: "📬", t: "Get Solution", d: "Receive notification when your work is ready" },
-              { n: "4", icon: "💳", t: "Pay After Grades", d: "Pay only when satisfied with the solution" },
+              { n: "01", t: "Post your assignment", d: "Describe your question, set your budget, share your deadline. No account required to start." },
+              { n: "02", t: "Or browse the library", d: "Find readymade solutions across 12+ subjects. Preview before you buy." },
+              { n: "03", t: "First one is on us", d: "New students get their first work free. We earn your trust before you commit." }
             ].map(s => (
-              <div key={s.n} style={S.card}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>{s.icon}</div>
-                <div style={{ fontFamily: "sans-serif", fontSize: 12, color: "#1a3a5c", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 6 }}>Step {s.n}</div>
-                <div style={{ fontFamily: "Georgia", fontSize: 16, fontWeight: 700, color: "#1a3a5c", marginBottom: 6 }}>{s.t}</div>
-                <div style={{ fontFamily: "sans-serif", fontSize: 13, color: "#666" }}>{s.d}</div>
+              <div key={s.n} style={{ background: "#fff", border: "1px solid #e8dfc8", borderRadius: 6, padding: "32px 28px", position: "relative" }}>
+                <div style={{ position: "absolute", top: -22, left: 28, background: "#faf6ee", padding: "0 12px" }}>
+                  <span style={{ fontFamily: "Georgia, serif", fontSize: 13, color: "#c9a961", fontWeight: 700, letterSpacing: "0.1em" }}>{s.n}</span>
+                </div>
+                <h3 style={{ fontFamily: "Georgia, serif", fontSize: 22, fontWeight: 700, color: "#0f3540", margin: "0 0 14px 0", lineHeight: 1.3 }}>{s.t}</h3>
+                <p style={{ fontFamily: "Georgia, serif", fontSize: 15, color: "#5a6670", margin: 0, lineHeight: 1.65 }}>{s.d}</p>
               </div>
             ))}
           </div>
@@ -135,11 +203,13 @@ function Home() {
 
       {/* Recently Added Solutions */}
       {recentSolutions.length > 0 && (
-        <div style={{ background: "#faf7f0", padding: "52px 24px" }}>
+        <div style={{ background: "#faf6ee", padding: "100px 24px 90px" }}>
           <div style={{ maxWidth: 1000, margin: "0 auto" }}>
             <div style={{ textAlign: "center", marginBottom: 32 }}>
-              <p style={{ fontFamily: "sans-serif", fontSize: 12, color: "#888", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 8 }}>From the Library</p>
-              <h2 style={{ ...S.h2, fontSize: 28, marginBottom: 8 }}>Recently Added Solutions</h2>
+              <p style={{ fontFamily: "sans-serif", fontSize: 12, color: "#c9a961", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 12, fontWeight: 600 }}>From the Library</p>
+              <h2 style={{ fontFamily: "Georgia, serif", fontSize: 38, fontWeight: 700, color: "#0f3540", margin: "0 0 14px 0", letterSpacing: "-0.5px" }}>
+                Recently Added <em style={{ color: "#c9a961" }}>Solutions</em>.
+              </h2>
               <p style={{ fontFamily: "sans-serif", fontSize: 14, color: "#666" }}>Browse our latest study help — solutions across {subjects.length} subjects</p>
             </div>
 
@@ -174,12 +244,19 @@ function Home() {
           </div>
         </div>
       )}
-      
+
       {/* Subjects */}
-      <div style={{ background: "#1a3a5c", padding: "36px 24px", textAlign: "center" }}>
-        <p style={{ color: "#cce0f5", fontFamily: "sans-serif", fontSize: 14, marginBottom: 16, letterSpacing: "0.1em", textTransform: "uppercase" }}>Subjects We Cover</p>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 10, maxWidth: 700, margin: "0 auto" }}>
-          {subjects.map(s => <span key={s} style={{ background: "#2a4a6c", color: "#cce0f5", padding: "6px 16px", borderRadius: 20, fontSize: 13, fontFamily: "sans-serif" }}>{s}</span>)}
+      <div style={{ background: "#0f3540", padding: "70px 24px", textAlign: "center", position: "relative" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          <p style={{ fontFamily: "sans-serif", fontSize: 12, color: "#c9a961", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 16, fontWeight: 600 }}>Subjects We Cover</p>
+          <h2 style={{ fontFamily: "Georgia, serif", fontSize: 30, fontWeight: 700, color: "#f0e3c4", margin: "0 0 36px 0", letterSpacing: "-0.5px" }}>
+            Help across <em style={{ color: "#c9a961" }}>every major</em>.
+          </h2>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 10 }}>
+            {subjects.map(s => (
+              <span key={s} style={{ background: "rgba(201,169,97,0.08)", color: "#f0e3c4", padding: "8px 18px", borderRadius: 4, fontSize: 14, fontFamily: "Georgia, serif", border: "1px solid rgba(201,169,97,0.3)", letterSpacing: "0.2px" }}>{s}</span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
