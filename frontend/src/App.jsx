@@ -170,6 +170,25 @@ function Home() {
         </div>
       </div>
 
+      {/* Trust strip */}
+      <div style={{ background: "#faf6ee", padding: "60px 24px 0", borderTop: "1px solid #e8dfc8" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 28 }}>
+            {[
+              { icon: "✓", title: "Quality You Can Trust", desc: "Every solution reviewed for accuracy and originality before publishing" },
+              { icon: "💰", title: "100% Money-Back Guarantee", desc: "Not satisfied with your solution? Get a full refund, no questions asked" },
+              { icon: "💬", title: "24/7 Support", desc: "Message us anytime — direct line via email or WhatsApp, real replies fast" }
+            ].map(t => (
+              <div key={t.title} style={{ textAlign: "center", padding: "0 12px" }}>
+                <div style={{ fontSize: 32, marginBottom: 14 }}>{t.icon}</div>
+                <h3 style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 700, color: "#0f3540", margin: "0 0 8px 0", letterSpacing: "-0.2px" }}>{t.title}</h3>
+                <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#5a6670", margin: 0, lineHeight: 1.55 }}>{t.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
       {/* How it works */}
       <div style={{ background: "#faf6ee", padding: "100px 24px 90px" }}>
         <div style={{ maxWidth: 1000, margin: "0 auto" }}>
