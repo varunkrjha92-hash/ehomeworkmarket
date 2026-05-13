@@ -89,7 +89,63 @@ function Nav({ user, logout }) {
 // ── HOME ─────────────────────────────────────────────────────
 function Home() {
   const [recentSolutions, setRecentSolutions] = useState([]);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
+
+  const heroSlides = [
+    {
+      eyebrow: "For College Students",
+      title: "Tutoring,",
+      title2: "done",
+      accent: "thoughtfully.",
+      subtitle: "Real help. Real experts. Browse readymade solutions or post your own assignment.",
+      cta1: { label: "Post Your Assignment →", link: "/ask" },
+      cta2: { label: "Browse Library", link: "/library" }
+    },
+    {
+      eyebrow: "Our Promise",
+      title: "Quality",
+      title2: "you can",
+      accent: "trust.",
+      subtitle: "Every solution is reviewed for accuracy and originality before publishing. No shortcuts, no compromises.",
+      cta1: { label: "Browse Library →", link: "/library" },
+      cta2: { label: "Post Your Assignment", link: "/ask" }
+    },
+    {
+      eyebrow: "Risk-Free",
+      title: "100%",
+      title2: "money-back",
+      accent: "guarantee.",
+      subtitle: "Not satisfied with your solution? Get a full refund, no questions asked. Your trust matters more than the sale.",
+      cta1: { label: "Browse Library →", link: "/library" },
+      cta2: { label: "Post Your Assignment", link: "/ask" }
+    },
+    {
+      eyebrow: "Always On",
+      title: "24/7",
+      title2: "support,",
+      accent: "always there.",
+      subtitle: "Message us anytime — direct line via email or WhatsApp. Real replies, fast.",
+      cta1: { label: "Contact Us →", link: "/contact" },
+      cta2: { label: "Browse Library", link: "/library" }
+    },
+    {
+      eyebrow: "Get Started",
+      title: "Post your",
+      title2: "assignment —",
+      accent: "first one's on us.",
+      subtitle: "Try us free. Submit your first assignment, get matched with an expert, and see the difference thoughtful help makes.",
+      cta1: { label: "Claim Free Assignment →", link: "/ask" },
+      cta2: { label: "Browse Library", link: "/library" }
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(s => (s + 1) % heroSlides.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     axios.get(`${API}/solutions?limit=6`)
@@ -100,90 +156,171 @@ function Home() {
   return (
     <div>
       {/* Hero */}
+      {/* Hero Slider */}
       <div style={{
         background: "linear-gradient(135deg, #0f3540 0%, #0a2a32 100%)",
         color: "#f0e3c4",
         padding: "100px 24px 90px",
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
+        minHeight: 560
       }}>
+        {/* Atmospheric glow orbs */}
         <div style={{
           position: "absolute",
-          top: -100,
-          right: -100,
-          width: 400,
-          height: 400,
+          top: "-120px",
+          left: "-80px",
+          width: 380,
+          height: 380,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(201,169,97,0.06) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(201,169,97,0.18), transparent 70%)",
+          filter: "blur(60px)",
           pointerEvents: "none"
         }} />
         <div style={{
           position: "absolute",
-          bottom: -150,
-          left: -100,
-          width: 500,
-          height: 500,
+          bottom: "-180px",
+          right: "-120px",
+          width: 480,
+          height: 480,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(26,90,106,0.4) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(13, 90, 95, 0.45), transparent 70%)",
+          filter: "blur(60px)",
           pointerEvents: "none"
         }} />
 
-        <div style={{ maxWidth: 1000, margin: "0 auto", position: "relative", zIndex: 1, textAlign: "center" }}>
-          <p style={{ fontFamily: "sans-serif", fontSize: 12, color: "#c9a961", letterSpacing: "0.25em", textTransform: "uppercase", marginBottom: 24, fontWeight: 600 }}>For College Students</p>
-
-          <h1 style={{ fontFamily: "Georgia, serif", fontSize: 64, fontWeight: 700, color: "#f0e3c4", margin: "0 0 12px 0", letterSpacing: "-1.5px", lineHeight: 1.05 }}>
-            Tutoring,
-          </h1>
-          <h1 style={{ fontFamily: "Georgia, serif", fontSize: 64, fontWeight: 700, color: "#f0e3c4", margin: "0 0 12px 0", letterSpacing: "-1.5px", lineHeight: 1.05 }}>
-            done <em style={{ color: "#c9a961", fontStyle: "italic" }}>thoughtfully.</em>
-          </h1>
-
-          <div style={{ width: 60, height: 2, background: "#c9a961", margin: "32px auto" }} />
-
-          <p style={{ fontFamily: "Georgia, serif", fontSize: 19, color: "#a8c4cc", maxWidth: 540, margin: "0 auto 36px", lineHeight: 1.6 }}>
-            Real help. Real experts. Browse readymade solutions or post your own assignment.
-          </p>
-
-          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
-            <Link to="/ask" style={{ textDecoration: "none" }}>
-              <button style={{ background: "#c9a961", color: "#0f3540", border: "none", padding: "14px 32px", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "Georgia, serif", fontWeight: 700, letterSpacing: "0.3px" }}>Post Your Assignment →</button>
-            </Link>
-            <Link to="/library" style={{ textDecoration: "none" }}>
-              <button style={{ background: "transparent", color: "#c9a961", border: "1px solid #c9a961", padding: "14px 32px", borderRadius: 4, fontSize: 15, cursor: "pointer", fontFamily: "Georgia, serif", fontWeight: 600, letterSpacing: "0.3px" }}>Browse Library</button>
-            </Link>
-          </div>
-
-          <div style={{ display: "flex", justifyContent: "center", gap: 50, flexWrap: "wrap", paddingTop: 24, borderTop: "1px solid rgba(201,169,97,0.2)", maxWidth: 600, margin: "0 auto" }}>
-            <div>
-              <div style={{ fontFamily: "sans-serif", fontSize: 11, color: "#7a9aa2", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600, marginBottom: 4 }}>From</div>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#f0e3c4", fontWeight: 700 }}>$10</div>
-            </div>
-            <div>
-              <div style={{ fontFamily: "sans-serif", fontSize: 11, color: "#7a9aa2", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600, marginBottom: 4 }}>Subjects</div>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#f0e3c4", fontWeight: 700 }}>12+</div>
-            </div>
-            <div>
-              <div style={{ fontFamily: "sans-serif", fontSize: 11, color: "#7a9aa2", letterSpacing: "0.2em", textTransform: "uppercase", fontWeight: 600, marginBottom: 4 }}>Delivery</div>
-              <div style={{ fontFamily: "Georgia, serif", fontSize: 20, color: "#f0e3c4", fontWeight: 700 }}>Within 1 hr</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Trust strip */}
-      <div style={{ background: "#faf6ee", padding: "60px 24px 0", borderTop: "1px solid #e8dfc8" }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 28 }}>
-            {[
-              { icon: "✓", title: "Quality You Can Trust", desc: "Every solution reviewed for accuracy and originality before publishing" },
-              { icon: "💰", title: "100% Money-Back Guarantee", desc: "Not satisfied with your solution? Get a full refund, no questions asked" },
-              { icon: "💬", title: "24/7 Support", desc: "Message us anytime — direct line via email or WhatsApp, real replies fast" }
-            ].map(t => (
-              <div key={t.title} style={{ textAlign: "center", padding: "0 12px" }}>
-                <div style={{ fontSize: 32, marginBottom: 14 }}>{t.icon}</div>
-                <h3 style={{ fontFamily: "Georgia, serif", fontSize: 18, fontWeight: 700, color: "#0f3540", margin: "0 0 8px 0", letterSpacing: "-0.2px" }}>{t.title}</h3>
-                <p style={{ fontFamily: "Georgia, serif", fontSize: 14, color: "#5a6670", margin: 0, lineHeight: 1.55 }}>{t.desc}</p>
+        {/* Slides */}
+        <div style={{ position: "relative", maxWidth: 1100, margin: "0 auto", zIndex: 2 }}>
+          {heroSlides.map((slide, idx) => (
+            <div
+              key={idx}
+              style={{
+                position: idx === currentSlide ? "relative" : "absolute",
+                top: 0, left: 0, right: 0,
+                opacity: idx === currentSlide ? 1 : 0,
+                transition: "opacity 1s ease-in-out",
+                textAlign: "center",
+                pointerEvents: idx === currentSlide ? "auto" : "none"
+              }}
+            >
+              <div style={{
+                fontFamily: "sans-serif",
+                fontSize: 12,
+                color: "#c9a961",
+                letterSpacing: "0.35em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+                marginBottom: 32
+              }}>
+                {slide.eyebrow}
               </div>
+
+              <h1 style={{
+                fontFamily: "Georgia, serif",
+                fontSize: "clamp(42px, 6vw, 76px)",
+                fontWeight: 700,
+                lineHeight: 1.08,
+                letterSpacing: "-0.5px",
+                color: "#f0e3c4",
+                margin: "0 0 8px 0"
+              }}>
+                {slide.title}
+              </h1>
+              <h1 style={{
+                fontFamily: "Georgia, serif",
+                fontSize: "clamp(42px, 6vw, 76px)",
+                fontWeight: 700,
+                lineHeight: 1.08,
+                letterSpacing: "-0.5px",
+                color: "#f0e3c4",
+                margin: 0
+              }}>
+                {slide.title2}{" "}
+                <em style={{ color: "#c9a961", fontStyle: "italic", fontWeight: 600 }}>
+                  {slide.accent}
+                </em>
+              </h1>
+
+              <div style={{
+                width: 56,
+                height: 2,
+                background: "#c9a961",
+                margin: "36px auto 28px"
+              }} />
+
+              <p style={{
+                fontFamily: "Georgia, serif",
+                fontSize: 18,
+                color: "#b9c4c8",
+                maxWidth: 640,
+                margin: "0 auto 40px",
+                lineHeight: 1.55
+              }}>
+                {slide.subtitle}
+              </p>
+
+              <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 48 }}>
+                <Link to={slide.cta1.link} style={{ textDecoration: "none" }}>
+                  <button style={{
+                    background: "#c9a961",
+                    color: "#0f3540",
+                    border: "none",
+                    padding: "14px 32px",
+                    borderRadius: 4,
+                    fontSize: 15,
+                    cursor: "pointer",
+                    fontFamily: "Georgia, serif",
+                    fontWeight: 700,
+                    letterSpacing: "0.3px"
+                  }}>
+                    {slide.cta1.label}
+                  </button>
+                </Link>
+                <Link to={slide.cta2.link} style={{ textDecoration: "none" }}>
+                  <button style={{
+                    background: "transparent",
+                    color: "#c9a961",
+                    border: "1px solid #c9a961",
+                    padding: "14px 32px",
+                    borderRadius: 4,
+                    fontSize: 15,
+                    cursor: "pointer",
+                    fontFamily: "Georgia, serif",
+                    fontWeight: 600,
+                    letterSpacing: "0.3px"
+                  }}>
+                    {slide.cta2.label}
+                  </button>
+                </Link>
+              </div>
+            </div>
+          ))}
+
+          {/* Slide indicators */}
+          <div style={{
+            display: "flex",
+            gap: 10,
+            justifyContent: "center",
+            marginTop: 24,
+            position: "relative",
+            zIndex: 3
+          }}>
+            {heroSlides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+                style={{
+                  width: idx === currentSlide ? 36 : 10,
+                  height: 4,
+                  borderRadius: 2,
+                  border: "none",
+                  background: idx === currentSlide ? "#c9a961" : "rgba(201,169,97,0.3)",
+                  cursor: "pointer",
+                  padding: 0,
+                  transition: "all 0.4s ease"
+                }}
+              />
             ))}
           </div>
         </div>
