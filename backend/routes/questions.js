@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const multer = require('multer');
 const path = require('path');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const Question = require('../models/Question');
 const Message = require('../models/Message');
 const authMiddleware = require('../middleware/auth');
@@ -12,10 +12,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 router.post('/submit', upload.single('file'), async (req, res) => {
   try {
@@ -38,8 +35,8 @@ router.post('/submit', upload.single('file'), async (req, res) => {
       fileUrl: req.file ? `/uploads/${req.file.filename}` : null
     });
 
-    await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
       to: process.env.ADMIN_EMAIL,
       subject: `New Question: ${subject}`,
       html: `<h2>New assignment submitted</h2>
@@ -75,8 +72,8 @@ router.post('/:id/message', async (req, res) => {
       text: req.body.text
     });
 
-    await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
       to: process.env.ADMIN_EMAIL,
       subject: 'New chat message from student',
       html: `<p>Student sent: <b>${req.body.text}</b></p>

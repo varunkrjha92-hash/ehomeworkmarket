@@ -1,14 +1,11 @@
 const router = require('express').Router();
 const paypal = require('@paypal/checkout-server-sdk');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const Solution = require('../models/Solution');
 const Purchase = require('../models/Purchase');
 const User = require('../models/User');
 const authMiddleware = require('../middleware/auth');
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // PayPal client setup
 function paypalClient() {
@@ -89,8 +86,8 @@ router.post('/capture-order/:orderId', authMiddleware, async (req, res) => {
 
         // Email to student
         if (buyer?.email) {
-          await transporter.sendMail({
-            from: `"eHomeworkMarket" <${process.env.GMAIL_USER}>`,
+          await resend.emails.send({
+            from: `"eHomeworkMarket" <${process.env.EMAIL_FROM}>`,
             to: buyer.email,
             subject: `Purchase Confirmation: ${solution.title}`,
             html: `
@@ -113,7 +110,7 @@ router.post('/capture-order/:orderId', authMiddleware, async (req, res) => {
                   </p>
                   <p style="font-size: 13px; color: #666;">You can also re-download anytime from "My Purchases" in your account.</p>
                   <hr style="border: none; border-top: 1px solid #ddd; margin: 24px 0;" />
-                  <p style="font-size: 12px; color: #888;">Questions? Reply to this email or contact ${process.env.GMAIL_USER}.</p>
+                  <p style="font-size: 12px; color: #888;">Questions? Reply to this email or contact ${process.env.EMAIL_FROM}.</p>
                 </div>
               </div>
             `
@@ -121,8 +118,8 @@ router.post('/capture-order/:orderId', authMiddleware, async (req, res) => {
         }
 
         // Email to admin (sale notification)
-        await transporter.sendMail({
-          from: `"eHomeworkMarket" <${process.env.GMAIL_USER}>`,
+        await resend.emails.send({
+          from: `"eHomeworkMarket" <${process.env.EMAIL_FROM}>`,
           to: process.env.ADMIN_EMAIL || process.env.GMAIL_USER,
           subject: `💰 New Sale: ${solution.title} ($${purchase.amount})`,
           html: `

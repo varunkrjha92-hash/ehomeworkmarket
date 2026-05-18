@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const multer = require('multer');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const Question = require('../models/Question');
 const Message = require('../models/Message');
 const User = require('../models/User');
@@ -12,10 +12,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS }
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const isAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin only' });
@@ -39,8 +36,8 @@ router.post('/questions/:id/solve', authMiddleware, isAdmin, upload.single('file
 
     const studentEmail = question.userId?.email || question.guestEmail;
     if (studentEmail) {
-      await transporter.sendMail({
-        from: process.env.GMAIL_USER,
+      await resend.emails.send({
+        from: process.env.EMAIL_FROM,
         to: studentEmail,
         subject: 'Your assignment has been solved — eHomeworkMarket',
         html: `<h2>Your assignment is ready!</h2>
@@ -71,8 +68,8 @@ router.post('/questions/:id/message', authMiddleware, isAdmin, async (req, res) 
     const studentEmail = question?.userId?.email || question?.guestEmail;
 
     if (studentEmail) {
-      await transporter.sendMail({
-        from: process.env.GMAIL_USER,
+      await resend.emails.send({
+        from: process.env.EMAIL_FROM,
         to: studentEmail,
         subject: 'New reply on your assignment — eHomeworkMarket',
         html: `<p>Expert replied: <b>${req.body.text}</b></p>
