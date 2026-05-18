@@ -92,4 +92,36 @@ router.get('/stats', authMiddleware, isAdmin, async (req, res) => {
   res.json({ total, pending, solved, paid, users });
 });
 
+// TEMPORARY — test email endpoint via Resend
+router.get('/test-email', async (req, res) => {
+  const secretKey = req.query.key;
+  if (secretKey !== 'verify-gmail-now-2026') {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  try {
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: process.env.ADMIN_EMAIL || process.env.GMAIL_USER,
+      subject: 'Resend test — eHomeworkMarket',
+      html: `
+        <h2 style="color: #0f3540;">✅ Resend works</h2>
+        <p>If you're reading this, the Resend migration is complete.</p>
+        <p><strong>Sent at:</strong> ${new Date().toISOString()}</p>
+        <p><strong>From:</strong> ${process.env.EMAIL_FROM}</p>
+        <hr/>
+        <p style="font-size: 12px; color: #888;">Delete this route after verification.</p>
+      `
+    });
+
+    res.json({ success: true, result });
+  } catch (err) {
+    console.error('Test email error:', err);
+    res.status(500).json({
+      error: 'Failed to send',
+      message: err.message
+    });
+  }
+});
+
 module.exports = router;
