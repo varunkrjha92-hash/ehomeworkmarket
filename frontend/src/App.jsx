@@ -1142,6 +1142,23 @@ function SolutionDetail({ user, token }) {
           </div>
         )}
 
+        {solution.previewText && solution.previewText.trim() && (
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+              <span style={{ fontFamily: "sans-serif", fontSize: 12, color: "#c9a961", letterSpacing: "0.18em", textTransform: "uppercase", fontWeight: 600 }}>Preview</span>
+              {solution.pageCount && (
+                <span style={{ color: "#888", fontSize: 13 }}>· {solution.pageCount} page{solution.pageCount > 1 ? "s" : ""}</span>
+              )}
+            </div>
+            <div style={{ background: "#fffdf6", border: "1px solid #e8dfc8", borderLeft: "3px solid #c9a961", padding: 16, borderRadius: 6 }}>
+              <p style={{ color: "#444", fontSize: 14, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap", fontFamily: "Georgia, serif" }}>{solution.previewText}</p>
+              <div style={{ marginTop: 10, fontSize: 12, color: "#999", fontStyle: "italic", fontFamily: "Georgia, serif" }}>
+                Sample shown. Full solution available after purchase.
+              </div>
+            </div>
+          </div>
+        )}
+
         <div style={{ borderTop: "1px solid #e0d8c8", paddingTop: 18 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
             <div>
