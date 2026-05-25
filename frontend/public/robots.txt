@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /my-purchases
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://www.ehomeworkmarket.com/sitemap.xml
