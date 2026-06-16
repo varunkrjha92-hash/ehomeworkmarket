@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from "re
 import axios from "axios";
 import { io } from "socket.io-client";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import HomePage from "./HomePage";
 
 const API = "https://ehomeworkmarket-production.up.railway.app/api";
 const SOCKET_URL = "https://ehomeworkmarket-production.up.railway.app";
@@ -32,7 +33,7 @@ function useAuth() {
 
 // ── STYLES ────────────────────────────────────────────────────
 const S = {
-  page: { minHeight: "100vh", background: "#faf6ee", fontFamily: "'Georgia', serif" },
+  page: { minHeight: "100vh", background: "#fff", fontFamily: "sans-serif" },
   nav: { background: "#0f3540", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 60 },
   navBrand: { color: "#c9a961", fontSize: 20, fontWeight: 700, textDecoration: "none" },
   navLink: { color: "#a8c4cc", fontSize: 14, textDecoration: "none", marginLeft: 20, fontFamily: "sans-serif" },
@@ -1668,7 +1669,7 @@ export default function App() {
       <div style={S.page}>
         <Nav user={user} logout={logout} />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Register login={login} />} />
           <Route path="/login" element={<Login login={login} />} />
           <Route path="/ask" element={<AskQuestion user={user} token={token} />} />
