@@ -15,16 +15,37 @@ const SERVICE_CARDS = [
 ];
 
 const SUBJECTS = [
-  { name: "Computer Science", icon: "💻", count: "320+" },
-  { name: "Nursing", icon: "🏥", count: "210+" },
-  { name: "Statistics", icon: "📊", count: "180+" },
-  { name: "MBA / Business", icon: "💼", count: "250+" },
-  { name: "Accounting", icon: "🧾", count: "140+" },
-  { name: "Mathematics", icon: "📐", count: "160+" },
-  { name: "Psychology", icon: "🧠", count: "130+" },
-  { name: "Economics", icon: "📈", count: "110+" },
-  { name: "Engineering", icon: "⚙️", count: "190+" },
-  { name: "All subjects", icon: "📚", count: "View all" },
+  { name: 'Computer Science', icon: '💻', count: '320+' },
+  { name: 'Nursing', icon: '🏥', count: '210+' },
+  { name: 'Statistics', icon: '📊', count: '180+' },
+  { name: 'MBA / Business', icon: '💼', count: '250+' },
+  { name: 'Accounting', icon: '🧾', count: '140+' },
+  { name: 'Mathematics', icon: '📐', count: '160+' },
+  { name: 'Psychology', icon: '🧠', count: '130+' },
+  { name: 'Economics', icon: '📈', count: '110+' },
+  { name: 'Engineering', icon: '⚙️', count: '190+' },
+  { name: 'English / Writing', icon: '✍️', count: '120+' },
+  { name: 'History', icon: '📜', count: '90+' },
+  { name: 'Biology', icon: '🔬', count: '100+' },
+  { name: 'Chemistry', icon: '⚗️', count: '80+' },
+  { name: 'Law', icon: '⚖️', count: '70+' },
+  { name: 'Marketing', icon: '📣', count: '95+' },
+  { name: 'Finance', icon: '💰', count: '110+' },
+  { name: 'Philosophy', icon: '🤔', count: '60+' },
+  { name: 'Sociology', icon: '👥', count: '75+' },
+  { name: 'Political Science', icon: '🏛️', count: '65+' },
+  { name: 'All subjects', icon: '📚', count: 'View all' },
+];
+
+const UNIVERSITIES = [
+  'University of Phoenix', 'Walden University', 'SNHU',
+  'Strayer University', 'Liberty University', 'DeVry University',
+  'Embry-Riddle Aeronautical', 'UMGC', 'Capella University',
+  'Grand Canyon University', 'American Military University',
+  'Ashford University', 'Colorado Technical University',
+  'Western Governors University', 'Chamberlain University',
+  'Purdue Global', 'National University', 'Regent University',
+  'South University', 'Kaplan University',
 ];
 
 const EXPERTS = [
@@ -124,6 +145,18 @@ export default function HomePage() {
               <div className="ehp-subj-name">{s.name}</div>
               <div className="ehp-subj-count">{s.count} solutions</div>
             </div>
+          ))}
+        </div>
+      </div>
+
+
+      <div className="ehp-unis">
+        <div className="ehp-sec-label">Universities we support</div>
+        <div className="ehp-sec-title">Helping students at 20+ top online universities</div>
+        <p className="ehp-sec-sub" style={{ marginBottom: 24 }}>From UOP to Walden — we know your curriculum inside out.</p>
+        <div className="ehp-unis-grid">
+          {UNIVERSITIES.map((u) => (
+            <button key={u} className="ehp-uni-pill" onClick={() => navigate('/ask')}>{u}</button>
           ))}
         </div>
       </div>

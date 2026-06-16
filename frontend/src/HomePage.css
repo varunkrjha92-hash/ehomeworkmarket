@@ -121,3 +121,14 @@
 .ehp-mobile-cta a { display: block; text-align: center; color: #fff; font-size: 15px; font-weight: 700; text-decoration: none; font-family: inherit; }
 @media (max-width: 960px) { .ehp-cards-grid { grid-template-columns: repeat(2, 1fr); } .ehp-subj-grid { grid-template-columns: repeat(3, 1fr); } .ehp-recent-grid { grid-template-columns: repeat(2, 1fr); } .ehp-footer-top { grid-template-columns: 1fr 1fr; } .ehp-stats { grid-template-columns: repeat(2, 1fr); } .ehp-reviews { grid-template-columns: 1fr; } .ehp-faq-grid { grid-template-columns: 1fr; } }
 @media (max-width: 680px) { .ehp-nav-links { display: none; } .ehp-cards-grid { grid-template-columns: 1fr; } .ehp-subj-grid { grid-template-columns: repeat(2, 1fr); } .ehp-how-steps { grid-template-columns: repeat(2, 1fr); } .ehp-experts { grid-template-columns: 1fr; } .ehp-recent-grid { grid-template-columns: 1fr; } .ehp-footer-top { grid-template-columns: 1fr; } .ehp-mobile-cta { display: block; } }
+
+.ehp-unis { background: #0D2137; padding: 52px 32px; }
+.ehp-unis .ehp-sec-title { color: #fff; }
+.ehp-unis .ehp-sec-label { color: #5BBFD4; }
+.ehp-unis .ehp-sec-sub { color: rgba(255,255,255,0.6); }
+.ehp-unis-grid { display: flex; flex-wrap: wrap; gap: 10px; max-width: 960px; }
+.ehp-uni-pill { padding: 8px 16px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; font-size: 13px; color: rgba(255,255,255,0.85); cursor: pointer; font-family: inherit; transition: background 0.15s, border-color 0.15s; }
+.ehp-uni-pill:hover { background: rgba(91,191,212,0.2); border-color: #5BBFD4; color: #fff; }
+.ehp-subj-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; max-width: 1100px; }
+@media (max-width: 960px) { .ehp-unis-grid { gap: 8px; } .ehp-uni-pill { font-size: 12px; padding: 6px 12px; } }
+@media (max-width: 680px) { .ehp-unis-grid { gap: 6px; } .ehp-subj-grid { grid-template-columns: repeat(2, 1fr); } }
