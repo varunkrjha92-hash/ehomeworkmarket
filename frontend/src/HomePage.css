@@ -1,4 +1,3 @@
-cat > src/HomePage.css << 'EOF'
 .ehp { all: unset; display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
 .ehp *, .ehp *::before, .ehp *::after { box-sizing: border-box; margin: 0; padding: 0; }
 .ehp-nav { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
