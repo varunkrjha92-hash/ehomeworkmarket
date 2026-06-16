@@ -60,6 +60,12 @@ const S = {
   flex: { display: "flex", alignItems: "center", justifyContent: "space-between" },
 };
 
+function ConditionalNav({ user, logout }) {
+  const location = useLocation();
+  if (location.pathname === "/") return null;
+  return <Nav user={user} logout={logout} />;
+}
+
 // ── NAV ──────────────────────────────────────────────────────
 function Nav({ user, logout }) {
   const navigate = useNavigate();
@@ -1667,7 +1673,7 @@ export default function App() {
     <PayPalScriptProvider options={{ "client-id": PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
     <BrowserRouter>
       <div style={S.page}>
-        {window.location.pathname !== "/" && <Nav user={user} logout={logout} />}
+        <ConditionalNav user={user} logout={logout} />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Register login={login} />} />
