@@ -140,7 +140,7 @@ export default function HomePage() {
         <p className="ehp-sec-sub">From STEM to humanities — our experts cover 50+ subject areas.</p>
         <div className="ehp-subj-grid">
           {SUBJECTS.map((s) => (
-            <div key={s.name} className="ehp-subj-card" onClick={() => navigate(`/library?subject=${encodeURIComponent(s.name)}`)}>
+            <div key={s.name} className="ehp-subj-card" onClick={() => navigate('/ask')}>
               <span className="ehp-subj-icon">{s.icon}</span>
               <div className="ehp-subj-name">{s.name}</div>
               <div className="ehp-subj-count">{s.count} solutions</div>
