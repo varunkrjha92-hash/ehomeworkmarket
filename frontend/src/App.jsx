@@ -1667,7 +1667,7 @@ export default function App() {
     <PayPalScriptProvider options={{ "client-id": PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
     <BrowserRouter>
       <div style={S.page}>
-        <Nav user={user} logout={logout} />
+        {window.location.pathname !== "/" && <Nav user={user} logout={logout} />}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<Register login={login} />} />
