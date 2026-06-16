@@ -1666,6 +1666,78 @@ function UploadSolution({ user, token }) {
   );
 }
 
+
+// ── CONTACT PAGE ─────────────────────────────────────────────
+function ContactPage() {
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [sent, setSent] = useState(false);
+
+  const handleSubmit = () => {
+    if (!form.name || !form.email || !form.message) return alert('Please fill in all required fields');
+    const mailtoLink = `mailto:support@ehomeworkmarket.com?subject=${encodeURIComponent(form.subject || 'Contact from website')}&body=${encodeURIComponent('Name: ' + form.name + '\nEmail: ' + form.email + '\n\n' + form.message)}`;
+    window.location.href = mailtoLink;
+    setSent(true);
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'sans-serif' }}>
+      <div style={{ maxWidth: 640, margin: '0 auto', padding: '52px 20px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 36 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#14748F', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Get in touch</p>
+          <h1 style={{ fontSize: 32, fontWeight: 700, color: '#0D2137', marginBottom: 10 }}>Contact Us</h1>
+          <p style={{ fontSize: 15, color: '#6B7280', lineHeight: 1.65 }}>Have a question or need help? We typically reply within a few hours.</p>
+        </div>
+
+        <div style={{ background: '#fff', border: '1.5px solid #e5e7eb', borderRadius: 14, padding: '32px 28px', marginBottom: 20 }}>
+          {sent ? (
+            <div style={{ textAlign: 'center', padding: '20px 0' }}>
+              <div style={{ fontSize: 48, marginBottom: 12 }}>✅</div>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0D2137', marginBottom: 8 }}>Message sent!</h2>
+              <p style={{ color: '#6B7280' }}>We will get back to you at {form.email} shortly.</p>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 14 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Your name *</label>
+                  <input style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontFamily: 'sans-serif', boxSizing: 'border-box' }} placeholder="John Smith" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Email address *</label>
+                  <input style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontFamily: 'sans-serif', boxSizing: 'border-box' }} type="email" placeholder="your@email.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} />
+                </div>
+              </div>
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Subject</label>
+                <input style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontFamily: 'sans-serif', boxSizing: 'border-box' }} placeholder="e.g. Question about an order" value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} />
+              </div>
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 6 }}>Message *</label>
+                <textarea style={{ width: '100%', padding: '10px 12px', border: '1.5px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontFamily: 'sans-serif', minHeight: 140, resize: 'vertical', boxSizing: 'border-box' }} placeholder="Tell us how we can help..." value={form.message} onChange={e => setForm({...form, message: e.target.value})} />
+              </div>
+              <button onClick={handleSubmit} style={{ width: '100%', padding: '13px', background: '#14748F', color: '#fff', border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'sans-serif' }}>Send Message →</button>
+            </>
+          )}
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+          {[
+            { icon: '📧', label: 'Email us', value: 'support@ehomeworkmarket.com' },
+            { icon: '⏱️', label: 'Response time', value: 'Within a few hours' },
+            { icon: '🌍', label: 'Available', value: '24/7 support' },
+          ].map(item => (
+            <div key={item.label} style={{ background: '#fff', border: '1.5px solid #e5e7eb', borderRadius: 12, padding: '16px', textAlign: 'center' }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>{item.icon}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{item.label}</div>
+              <div style={{ fontSize: 13, color: '#0D2137', fontWeight: 600 }}>{item.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const { user, token, login, logout } = useAuth();
 

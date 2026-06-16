@@ -91,6 +91,7 @@ function ServiceCard({ card }) {
 
 export default function HomePage() {
   const [recentSolutions, setRecentSolutions] = useState([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -104,17 +105,27 @@ export default function HomePage() {
       <nav className="ehp-nav">
         <Link to="/" className="ehp-logo"><div className="ehp-logo-icon">📚</div>eHomeworkMarket</Link>
         <div className="ehp-nav-links">
-          <button className="ehp-nav-link">Plans</button>
-          <button className="ehp-nav-link">Services ▾</button>
-          <button className="ehp-nav-link">Subjects ▾</button>
-          <button className="ehp-nav-link">Experts ▾</button>
-          <button className="ehp-nav-link" onClick={() => navigate("/library")}>Library</button>
+          <button className="ehp-nav-link" onClick={() => navigate('/ask')}>Ask Expert</button>
+          <button className="ehp-nav-link" onClick={() => navigate('/library')}>Library</button>
+          <button className="ehp-nav-link" onClick={() => navigate('/contact')}>Contact</button>
         </div>
         <div className="ehp-nav-right">
-          <button className="ehp-btn-login" onClick={() => navigate("/login")}>Log In</button>
-          <button className="ehp-btn-signup" onClick={() => navigate("/register")}>Sign Up</button>
+          <button className="ehp-btn-login" onClick={() => navigate('/login')}>Log In</button>
+          <button className="ehp-btn-signup" onClick={() => navigate('/register')}>Sign Up</button>
+          <button className="ehp-hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
+            {mobileMenuOpen ? '✕' : '☰'}
+          </button>
         </div>
       </nav>
+      {mobileMenuOpen && (
+        <div className="ehp-mobile-menu">
+          <button onClick={() => { navigate('/ask'); setMobileMenuOpen(false); }}>Ask Expert</button>
+          <button onClick={() => { navigate('/library'); setMobileMenuOpen(false); }}>Library</button>
+          <button onClick={() => { navigate('/contact'); setMobileMenuOpen(false); }}>Contact</button>
+          <button onClick={() => { navigate('/login'); setMobileMenuOpen(false); }}>Log In</button>
+          <button onClick={() => { navigate('/register'); setMobileMenuOpen(false); }}>Sign Up Free</button>
+        </div>
+      )}
 
       <div className="ehp-hero">
         <span className="ehp-hero-star-left">✳</span>
