@@ -1895,6 +1895,12 @@ export default function App() {
           <Route path="/library" element={<Library />} />
           <Route path="/my-purchases" element={<MyPurchases user={user} token={token} />} />
           <Route path="/library/:id" element={<SolutionDetail user={user} token={token} />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/refund" element={<RefundPage />} />
+          <Route path="/academic-integrity" element={<AcademicIntegrityPage />} />
+          <Route path="/dmca" element={<DMCAPage />} />
         </Routes>
       </div>
     </BrowserRouter>
