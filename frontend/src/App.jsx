@@ -1738,6 +1738,132 @@ function ContactPage() {
   );
 }
 
+
+// ── LEGAL PAGE TEMPLATE ───────────────────────────────────────
+function LegalPage({ title, children }) {
+  return (
+    <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'sans-serif' }}>
+      <div style={{ maxWidth: 780, margin: '0 auto', padding: '52px 24px 80px' }}>
+        <div style={{ marginBottom: 36 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#14748F', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Legal</p>
+          <h1 style={{ fontSize: 32, fontWeight: 700, color: '#0D2137', marginBottom: 10 }}>{title}</h1>
+          <p style={{ fontSize: 13, color: '#9CA3AF' }}>Last updated: June 2026 &nbsp;·&nbsp; eHomeworkMarket is operated by Massinfotech, India</p>
+        </div>
+        <div style={{ background: '#fff', border: '1.5px solid #e5e7eb', borderRadius: 14, padding: '36px 32px', lineHeight: 1.75, color: '#374151', fontSize: 15 }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const lh = (text) => <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0D2137', margin: '28px 0 10px' }}>{text}</h2>;
+const lp = (text) => <p style={{ marginBottom: 14 }}>{text}</p>;
+const ll = (items) => <ul style={{ paddingLeft: 20, marginBottom: 14 }}>{items.map((i,k) => <li key={k} style={{ marginBottom: 6 }}>{i}</li>)}</ul>;
+
+function PrivacyPage() {
+  return (
+    <LegalPage title="Privacy Policy">
+      {lp("This Privacy Policy explains what information eHomeworkMarket (operated by Massinfotech, India) collects when you use www.ehomeworkmarket.com, how we use it, and the choices you have.")}
+      {lh("Information we collect")}
+      {ll(["Account information: when you register, we collect your name and email address.", "Payment information: payments are processed by PayPal. We do not collect or store your credit/debit card details.", "Usage and analytics data: we use Google Analytics (GA4) to understand how visitors use the Site.", "Communications: transactional emails are sent using Resend."])}
+      {lh("How we use your information")}
+      {ll(["Create and manage your account", "Process purchases and deliver the materials you buy", "Send transactional emails related to your account and purchases", "Understand and improve how the Site is used"])}
+      {lh("Sharing of information")}
+      {lp("We do not sell your personal information to third parties. We share information only with service providers that help us operate the Site (PayPal, Google Analytics, Resend, Cloudflare R2), and only as needed for them to provide their service, or where required by law.")}
+      {lh("Cookies and analytics")}
+      {lp("The Site uses cookies and similar technologies, mainly through Google Analytics, to measure usage. You can control or disable cookies through your browser settings.")}
+      {lh("Data retention")}
+      {lp("We keep your information for as long as your account is active or as needed to provide the service and meet legal or business requirements.")}
+      {lh("Your choices")}
+      {lp("You can contact us at support@ehomeworkmarket.com to ask about the information we hold about you, to request corrections, or to request deletion of your account.")}
+      {lh("Children")}
+      {lp("The Site is intended for college students and adults. It is not directed at children under the age of 13.")}
+      {lh("Contact")}
+      {lp("Questions about privacy: support@ehomeworkmarket.com — Massinfotech, India.")}
+    </LegalPage>
+  );
+}
+
+function TermsPage() {
+  return (
+    <LegalPage title="Terms of Service">
+      {lh("1. Who we are")}
+      {lp("eHomeworkMarket is a service operated by Massinfotech, a company registered in India. By accessing or using www.ehomeworkmarket.com or buying anything through it, you agree to these Terms of Service.")}
+      {lh("2. What we provide")}
+      {lp("eHomeworkMarket offers academic study materials and tutoring-related services, including readymade solutions available for purchase and download, and the ability to post assignment questions. All materials are provided as study, research, and reference resources.")}
+      {lh("3. Accounts")}
+      {lp("To buy or download materials you may need to create an account. You are responsible for keeping your login details secure and for all activity that happens under your account.")}
+      {lh("4. Acceptable use")}
+      {ll(["Do not use the Site for any unlawful purpose", "Do not resell, redistribute, or publicly share materials purchased from the Site", "Do not attempt to gain unauthorized access to the Site or other users' accounts", "Do not interfere with or disrupt the Site's operation"])}
+      {lh("5. Purchases and payment")}
+      {lp("Prices are listed in US dollars. Payments are processed by PayPal. When you buy a solution, you receive a personal-use license to download and use it for your own study and reference.")}
+      {lh("6. Refunds")}
+      {lp("Refunds are handled under our Refund Policy. If a purchased solution does not deliver what was described, contact us at support@ehomeworkmarket.com with details and we will review and issue a refund where the claim is valid.")}
+      {lh("7. Intellectual property")}
+      {lp("All content on the Site is owned by Massinfotech or its licensors. Purchasing a solution gives you a personal-use license — it does not transfer ownership or the right to redistribute.")}
+      {lh("8. Academic responsibility")}
+      {lp("Materials are provided for educational and reference purposes only. You are solely responsible for how you use them and for complying with the academic-integrity rules of your institution.")}
+      {lh("9. Limitation of liability")}
+      {lp("The Site and its materials are provided 'as is'. To the maximum extent permitted by law, Massinfotech is not liable for any indirect, incidental, or consequential damages. Our total liability for any claim is limited to the amount you paid for that purchase.")}
+      {lh("10. Governing law")}
+      {lp("These Terms are governed by the laws of India. Any disputes will be subject to the jurisdiction of the courts of India.")}
+      {lh("11. Contact")}
+      {lp("Questions: support@ehomeworkmarket.com — Massinfotech, India.")}
+    </LegalPage>
+  );
+}
+
+function RefundPage() {
+  return (
+    <LegalPage title="Refund Policy">
+      {lh("Our commitment")}
+      {lp("We want you to get genuine value from what you buy on eHomeworkMarket. If a purchased solution does not deliver what was described on its product page, we will make it right.")}
+      {lh("When you can request a refund")}
+      {ll(["The solution does not match the description, subject, or scope shown on its product page", "The solution is incomplete, unusable, or substantially different from what was advertised"])}
+      {lh("How to request a refund")}
+      {lp("Email us at support@ehomeworkmarket.com with: the email address used for the purchase, the name of the solution and your order/transaction reference, and a clear explanation of the problem with supporting proof.")}
+      {lh("How we handle requests")}
+      {lp("We review each request individually. Where the claim is valid, we issue a refund to your original payment method via PayPal. We aim to review requests promptly after receiving the necessary information.")}
+      {lh("What is not covered")}
+      {ll(["The solution delivered matches its description and was usable, but you simply changed your mind", "The request is based on issues outside the solution itself (for example, how it was used)"])}
+      {lh("Contact")}
+      {lp("Refund questions: support@ehomeworkmarket.com — Massinfotech, India.")}
+    </LegalPage>
+  );
+}
+
+function AcademicIntegrityPage() {
+  return (
+    <LegalPage title="Academic Integrity Disclaimer">
+      {lp("eHomeworkMarket provides academic study materials and tutoring-related services strictly for educational and reference purposes.")}
+      {lh("Intended use")}
+      {lp("All materials available on eHomeworkMarket — including readymade solutions and expert-assisted work — are intended to be used as study aids, reference materials, and learning resources. They are designed to help students understand concepts, approaches, and structures used in academic work.")}
+      {lh("Your responsibility")}
+      {ll(["You are solely responsible for how you use materials purchased or obtained from eHomeworkMarket", "You must review, verify, and prepare your own work before submitting anything to any institution or platform", "You are responsible for complying with your institution's academic-integrity policies, honor codes, and any applicable rules"])}
+      {lh("No contract cheating")}
+      {lp("eHomeworkMarket does not endorse, encourage, or facilitate academic dishonesty, plagiarism, or any violation of institutional policies. Any misuse of our materials in violation of your institution's rules is solely your responsibility.")}
+      {lh("Contact")}
+      {lp("Questions: support@ehomeworkmarket.com — Massinfotech, India.")}
+    </LegalPage>
+  );
+}
+
+function DMCAPage() {
+  return (
+    <LegalPage title="DMCA Policy">
+      {lp("eHomeworkMarket (operated by Massinfotech) respects intellectual property rights and expects users to do the same.")}
+      {lh("Reporting copyright infringement")}
+      {lp("If you believe that content on www.ehomeworkmarket.com infringes your copyright, please send a notice to support@ehomeworkmarket.com with the following information:")}
+      {ll(["A description of the copyrighted work you claim has been infringed", "A description of where the infringing material is located on our Site", "Your contact information (name, address, email, phone number)", "A statement that you have a good faith belief that the use is not authorized by the copyright owner", "A statement that the information in your notice is accurate and, under penalty of perjury, that you are the copyright owner or authorized to act on their behalf", "Your physical or electronic signature"])}
+      {lh("Response")}
+      {lp("We will review all valid DMCA notices and respond promptly. We reserve the right to remove content alleged to be infringing and to terminate accounts of repeat infringers.")}
+      {lh("Contact")}
+      {lp("DMCA notices: support@ehomeworkmarket.com — Massinfotech, India.")}
+    </LegalPage>
+  );
+}
+
 export default function App() {
   const { user, token, login, logout } = useAuth();
 

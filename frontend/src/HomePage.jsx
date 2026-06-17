@@ -292,7 +292,7 @@ export default function HomePage() {
           </div>
           <div className="ehp-footer-col"><h4>Services</h4><Link to="/ask">Assignment help</Link><Link to="/ask">Research & writing</Link><Link to="/ask">Discussion posts</Link><Link to="/ask">Online coursework</Link></div>
           <div className="ehp-footer-col"><h4>Company</h4><Link to="/library">Solutions library</Link><a href="mailto:support@ehomeworkmarket.com">Contact us</a><Link to="/register">Create account</Link><Link to="/login">Log in</Link></div>
-          <div className="ehp-footer-col"><h4>Legal</h4><a href="#">Privacy policy</a><a href="#">Terms & conditions</a><a href="#">Refund policy</a><a href="#">Academic integrity</a></div>
+          <div className="ehp-footer-col"><h4>Legal</h4><Link to="/privacy">Privacy policy</Link><Link to="/terms">Terms & conditions</Link><Link to="/refund">Refund policy</Link><Link to="/academic-integrity">Academic integrity</Link><Link to="/dmca">DMCA policy</Link></div>
         </div>
         <div className="ehp-footer-bottom">
           <span className="ehp-footer-copy">© 2026 Massinfotech. All rights reserved.</span>
