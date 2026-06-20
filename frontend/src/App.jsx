@@ -1864,6 +1864,46 @@ function DMCAPage() {
   );
 }
 
+
+// ── SITE FOOTER (shown on all pages except homepage) ──────────
+function SiteFooter() {
+  const location = useLocation();
+  if (location.pathname === "/") return null;
+  return (
+    <footer style={{ background: '#0D2137', padding: '36px 24px 20px', marginTop: 40, fontFamily: 'sans-serif' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr 1fr 1fr', gap: 28, marginBottom: 28 }}>
+          <div>
+            <div style={{ color: '#fff', fontSize: 15, fontWeight: 700, marginBottom: 10 }}>📚 eHomeworkMarket</div>
+            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, maxWidth: 220 }}>Expert academic assistance for college students worldwide. Confidential, fast, and reliable.</p>
+          </div>
+          <div>
+            <h4 style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.6)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Services</h4>
+            <Link to="/ask" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>Assignment help</Link>
+            <Link to="/library" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>Solutions library</Link>
+          </div>
+          <div>
+            <h4 style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.6)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Company</h4>
+            <Link to="/contact" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>Contact us</Link>
+            <Link to="/register" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>Create account</Link>
+          </div>
+          <div>
+            <h4 style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.6)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Legal</h4>
+            <Link to="/privacy" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>Privacy policy</Link>
+            <Link to="/terms" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>Terms & conditions</Link>
+            <Link to="/refund" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>Refund policy</Link>
+            <Link to="/academic-integrity" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>Academic integrity</Link>
+            <Link to="/dmca" style={{ display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', textDecoration: 'none', marginBottom: 8 }}>DMCA policy</Link>
+          </div>
+        </div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 16, textAlign: 'center' }}>
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>© 2026 Massinfotech. All rights reserved. eHomeworkMarket is a service of Massinfotech, India.</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 export default function App() {
   const { user, token, login, logout } = useAuth();
 
@@ -1902,6 +1942,7 @@ export default function App() {
           <Route path="/academic-integrity" element={<AcademicIntegrityPage />} />
           <Route path="/dmca" element={<DMCAPage />} />
         </Routes>
+        <SiteFooter />
       </div>
     </BrowserRouter>
     </PayPalScriptProvider>
