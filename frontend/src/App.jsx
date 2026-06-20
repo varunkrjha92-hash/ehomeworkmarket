@@ -428,6 +428,7 @@ function Home() {
 
 // ── REGISTER ─────────────────────────────────────────────────
 function Register({ login }) {
+  usePageTitle("Create Free Account | eHomeworkMarket", "Sign up free and get expert academic assistance for your college assignments.");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [err, setErr] = useState("");
   const navigate = useNavigate();
@@ -468,6 +469,7 @@ function Register({ login }) {
 
 // ── LOGIN ─────────────────────────────────────────────────────
 function Login({ login }) {
+  usePageTitle("Log In | eHomeworkMarket", "Log in to your eHomeworkMarket account to track assignments and access purchased solutions.");
   const [form, setForm] = useState({ email: "", password: "" });
   const [err, setErr] = useState("");
   const navigate = useNavigate();
@@ -505,6 +507,7 @@ function Login({ login }) {
 
 // ── ASK / SUBMIT QUESTION ─────────────────────────────────────
 function AskQuestion({ user, token }) {
+  usePageTitle("Post Your Assignment — Get Expert Help | eHomeworkMarket", "Submit your assignment and get matched with a qualified subject specialist. Fast turnaround, confidential, 24/7 support.");
   const [form, setForm] = useState({ subject: "", description: "", budget: "", deadline: "", guestEmail: "" });
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -955,6 +958,7 @@ function MyPurchases({ user, token }) {
 
 // ── PUBLIC LIBRARY ────────────────────────────────────────────
 function Library() {
+  usePageTitle("Solution Library — Browse Academic Solutions | eHomeworkMarket", "Browse thousands of expert-written academic solutions across Computer Science, Nursing, Statistics, MBA, and more. Preview before you buy.");
   const [solutions, setSolutions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -1080,7 +1084,14 @@ function SolutionDetail({ user, token }) {
   useEffect(() => {
     setLoading(true);
     axios.get(`${API}/solutions/${id}`)
-      .then(r => setSolution(r.data))
+      .then(r => {
+        setSolution(r.data);
+        if (r.data?.title) {
+          document.title = r.data.title + " | eHomeworkMarket";
+          let meta = document.querySelector('meta[name="description"]');
+          if (meta && r.data.description) meta.setAttribute('content', r.data.description.slice(0, 160));
+        }
+      })
       .catch(() => setSolution(null))
       .finally(() => setLoading(false));
   }, [id]);
@@ -1669,6 +1680,7 @@ function UploadSolution({ user, token }) {
 
 // ── CONTACT PAGE ─────────────────────────────────────────────
 function ContactPage() {
+  usePageTitle("Contact Us | eHomeworkMarket", "Get in touch with eHomeworkMarket. We typically reply within a few hours.");
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
 
@@ -1762,6 +1774,7 @@ const lp = (text) => <p style={{ marginBottom: 14 }}>{text}</p>;
 const ll = (items) => <ul style={{ paddingLeft: 20, marginBottom: 14 }}>{items.map((i,k) => <li key={k} style={{ marginBottom: 6 }}>{i}</li>)}</ul>;
 
 function PrivacyPage() {
+  usePageTitle("Privacy Policy | eHomeworkMarket", "Read eHomeworkMarket's privacy policy to understand how we collect, use, and protect your information.");
   return (
     <LegalPage title="Privacy Policy">
       {lp("This Privacy Policy explains what information eHomeworkMarket (operated by Massinfotech, India) collects when you use www.ehomeworkmarket.com, how we use it, and the choices you have.")}
@@ -1786,6 +1799,7 @@ function PrivacyPage() {
 }
 
 function TermsPage() {
+  usePageTitle("Terms of Service | eHomeworkMarket", "Read the terms of service for using eHomeworkMarket's academic assistance platform.");
   return (
     <LegalPage title="Terms of Service">
       {lh("1. Who we are")}
@@ -1815,6 +1829,7 @@ function TermsPage() {
 }
 
 function RefundPage() {
+  usePageTitle("Refund Policy | eHomeworkMarket", "Learn about eHomeworkMarket's refund policy for purchased academic solutions.");
   return (
     <LegalPage title="Refund Policy">
       {lh("Our commitment")}
@@ -1834,6 +1849,7 @@ function RefundPage() {
 }
 
 function AcademicIntegrityPage() {
+  usePageTitle("Academic Integrity Disclaimer | eHomeworkMarket", "eHomeworkMarket's academic integrity policy and responsible use guidelines.");
   return (
     <LegalPage title="Academic Integrity Disclaimer">
       {lp("eHomeworkMarket provides academic study materials and tutoring-related services strictly for educational and reference purposes.")}
@@ -1850,6 +1866,7 @@ function AcademicIntegrityPage() {
 }
 
 function DMCAPage() {
+  usePageTitle("DMCA Policy | eHomeworkMarket", "eHomeworkMarket's DMCA copyright policy and infringement reporting process.");
   return (
     <LegalPage title="DMCA Policy">
       {lp("eHomeworkMarket (operated by Massinfotech) respects intellectual property rights and expects users to do the same.")}
@@ -1902,6 +1919,18 @@ function SiteFooter() {
       </div>
     </footer>
   );
+}
+
+
+// ── PER-PAGE SEO TITLES ─────────────────────────────────────
+function usePageTitle(title, description) {
+  useEffect(() => {
+    document.title = title;
+    if (description) {
+      let meta = document.querySelector('meta[name="description"]');
+      if (meta) meta.setAttribute('content', description);
+    }
+  }, [title, description]);
 }
 
 export default function App() {

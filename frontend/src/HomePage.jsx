@@ -90,6 +90,9 @@ function ServiceCard({ card }) {
 }
 
 export default function HomePage() {
+  useEffect(() => {
+    document.title = "eHomeworkMarket — Expert Academic Assistance for College Students";
+  }, []);
   const [recentSolutions, setRecentSolutions] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
