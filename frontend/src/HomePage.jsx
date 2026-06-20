@@ -90,8 +90,49 @@ function ServiceCard({ card }) {
 }
 
 export default function HomePage() {
+
   useEffect(() => {
     document.title = "eHomeworkMarket — Expert Academic Assistance for College Students";
+
+    // Organization schema
+    const orgSchema = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "eHomeworkMarket",
+      "url": "https://www.ehomeworkmarket.com",
+      "logo": "https://www.ehomeworkmarket.com/favicon.svg",
+      "description": "Expert academic assistance for college students across 20+ subjects.",
+      "email": "support@ehomeworkmarket.com",
+      "sameAs": []
+    };
+
+    // FAQ schema (matches the FAQ section on this page)
+    const faqSchema = {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": FAQS.map(f => ({
+        "@type": "Question",
+        "name": f.q,
+        "acceptedAnswer": { "@type": "Answer", "text": f.a }
+      }))
+    };
+
+    const script1 = document.createElement('script');
+    script1.type = 'application/ld+json';
+    script1.id = 'org-schema';
+    script1.text = JSON.stringify(orgSchema);
+    document.head.appendChild(script1);
+
+    const script2 = document.createElement('script');
+    script2.type = 'application/ld+json';
+    script2.id = 'faq-schema';
+    script2.text = JSON.stringify(faqSchema);
+    document.head.appendChild(script2);
+
+    return () => {
+      document.getElementById('org-schema')?.remove();
+      document.getElementById('faq-schema')?.remove();
+    };
   }, []);
   const [recentSolutions, setRecentSolutions] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
