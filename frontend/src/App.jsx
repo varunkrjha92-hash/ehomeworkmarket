@@ -4,6 +4,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import HomePage from "./HomePage";
+import LandingPage from "./LandingPage";
 
 const API = "https://ehomeworkmarket-production.up.railway.app/api";
 const SOCKET_URL = "https://ehomeworkmarket-production.up.railway.app";
@@ -1970,6 +1971,9 @@ export default function App() {
           <Route path="/refund" element={<RefundPage />} />
           <Route path="/academic-integrity" element={<AcademicIntegrityPage />} />
           <Route path="/dmca" element={<DMCAPage />} />
+          <Route path="/subjects/:slug" element={<LandingPage type="subject" />} />
+          <Route path="/help/:slug" element={<LandingPage type="help" />} />
+          <Route path="/universities/:slug" element={<LandingPage type="university" />} />
         </Routes>
         <SiteFooter />
       </div>
