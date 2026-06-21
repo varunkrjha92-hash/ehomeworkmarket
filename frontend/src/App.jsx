@@ -64,6 +64,7 @@ const S = {
 function ConditionalNav({ user, logout }) {
   const location = useLocation();
   if (location.pathname === "/") return null;
+  if (location.pathname.startsWith("/subjects/") || location.pathname.startsWith("/help/") || location.pathname.startsWith("/universities/")) return null;
   return <Nav user={user} logout={logout} />;
 }
 
