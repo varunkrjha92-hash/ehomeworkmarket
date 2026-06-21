@@ -328,6 +328,57 @@ export default function HomePage() {
         </div>
       </div>
 
+
+      {/* SEO INTERNAL LINKS */}
+      <div className="ehp-seo-links">
+        <div className="ehp-seo-links-inner">
+          <div className="ehp-seo-col">
+            <h4>Popular Subjects</h4>
+            <Link to="/subjects/computer-science">Computer Science Help</Link>
+            <Link to="/subjects/nursing">Nursing Help</Link>
+            <Link to="/subjects/statistics">Statistics Help</Link>
+            <Link to="/subjects/mathematics">Math Help</Link>
+            <Link to="/subjects/calculus">Calculus Help</Link>
+            <Link to="/subjects/business">Business Help</Link>
+            <Link to="/subjects/accounting">Accounting Help</Link>
+            <Link to="/subjects/psychology">Psychology Help</Link>
+            <Link to="/subjects/economics">Economics Help</Link>
+            <Link to="/subjects/chemistry">Chemistry Help</Link>
+            <Link to="/subjects/biology">Biology Help</Link>
+            <Link to="/subjects/engineering">Engineering Help</Link>
+            <Link to="/subjects/history">History Help</Link>
+            <Link to="/subjects/english">English & Writing Help</Link>
+          </div>
+          <div className="ehp-seo-col">
+            <h4>How We Help</h4>
+            <Link to="/help/do-my-homework">Do My Homework</Link>
+            <Link to="/help/assignment-help">Assignment Help</Link>
+            <Link to="/help/essay-writing-help">Essay Writing Help</Link>
+            <Link to="/help/exam-help">Exam Help</Link>
+            <Link to="/help/lab-report-help">Lab Report Help</Link>
+            <Link to="/help/presentation-help">Presentation Help</Link>
+            <Link to="/help/project-help">Project Help</Link>
+            <Link to="/help/discussion-post-help">Discussion Post Help</Link>
+            <Link to="/help/online-class-help">Online Class Help</Link>
+          </div>
+          <div className="ehp-seo-col">
+            <h4>Universities</h4>
+            <Link to="/universities/walden">Walden University</Link>
+            <Link to="/universities/university-of-phoenix">University of Phoenix</Link>
+            <Link to="/universities/snhu">SNHU</Link>
+            <Link to="/universities/strayer">Strayer University</Link>
+            <Link to="/universities/liberty">Liberty University</Link>
+            <Link to="/universities/capella">Capella University</Link>
+            <Link to="/universities/grand-canyon">Grand Canyon University</Link>
+            <Link to="/universities/chamberlain">Chamberlain University</Link>
+            <Link to="/universities/devry">DeVry University</Link>
+            <Link to="/universities/umgc">UMGC</Link>
+            <Link to="/universities/wgu">WGU</Link>
+            <Link to="/universities/purdue-global">Purdue Global</Link>
+          </div>
+        </div>
+      </div>
+
       <footer className="ehp-footer">
         <div className="ehp-footer-top">
           <div>
