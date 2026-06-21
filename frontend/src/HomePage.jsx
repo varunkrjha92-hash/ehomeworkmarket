@@ -89,6 +89,49 @@ function ServiceCard({ card }) {
   );
 }
 
+
+const SUBJECT_LINKS = [
+  { to: "/subjects/computer-science", label: "Computer Science Help" },
+  { to: "/subjects/nursing", label: "Nursing Help" },
+  { to: "/subjects/statistics", label: "Statistics Help" },
+  { to: "/subjects/mathematics", label: "Math Help" },
+  { to: "/subjects/calculus", label: "Calculus Help" },
+  { to: "/subjects/business", label: "Business Help" },
+  { to: "/subjects/accounting", label: "Accounting Help" },
+  { to: "/subjects/psychology", label: "Psychology Help" },
+  { to: "/subjects/economics", label: "Economics Help" },
+  { to: "/subjects/chemistry", label: "Chemistry Help" },
+  { to: "/subjects/biology", label: "Biology Help" },
+  { to: "/subjects/engineering", label: "Engineering Help" },
+  { to: "/subjects/history", label: "History Help" },
+  { to: "/subjects/english", label: "English & Writing Help" },
+];
+const HELP_LINKS = [
+  { to: "/help/do-my-homework", label: "Do My Homework" },
+  { to: "/help/assignment-help", label: "Assignment Help" },
+  { to: "/help/essay-writing-help", label: "Essay Writing Help" },
+  { to: "/help/exam-help", label: "Exam Help" },
+  { to: "/help/lab-report-help", label: "Lab Report Help" },
+  { to: "/help/presentation-help", label: "Presentation Help" },
+  { to: "/help/project-help", label: "Project Help" },
+  { to: "/help/discussion-post-help", label: "Discussion Post Help" },
+  { to: "/help/online-class-help", label: "Online Class Help" },
+];
+const UNI_LINKS = [
+  { to: "/universities/walden", label: "Walden University" },
+  { to: "/universities/university-of-phoenix", label: "University of Phoenix" },
+  { to: "/universities/snhu", label: "SNHU" },
+  { to: "/universities/strayer", label: "Strayer University" },
+  { to: "/universities/liberty", label: "Liberty University" },
+  { to: "/universities/capella", label: "Capella University" },
+  { to: "/universities/grand-canyon", label: "Grand Canyon University" },
+  { to: "/universities/chamberlain", label: "Chamberlain University" },
+  { to: "/universities/devry", label: "DeVry University" },
+  { to: "/universities/umgc", label: "UMGC" },
+  { to: "/universities/wgu", label: "WGU" },
+  { to: "/universities/purdue-global", label: "Purdue Global" },
+];
+
 export default function HomePage() {
 
   useEffect(() => {
@@ -329,52 +372,35 @@ export default function HomePage() {
       </div>
 
 
-      {/* SEO INTERNAL LINKS */}
-      <div className="ehp-seo-links">
-        <div className="ehp-seo-links-inner">
-          <div className="ehp-seo-col">
-            <h4>Popular Subjects</h4>
-            <Link to="/subjects/computer-science">Computer Science Help</Link>
-            <Link to="/subjects/nursing">Nursing Help</Link>
-            <Link to="/subjects/statistics">Statistics Help</Link>
-            <Link to="/subjects/mathematics">Math Help</Link>
-            <Link to="/subjects/calculus">Calculus Help</Link>
-            <Link to="/subjects/business">Business Help</Link>
-            <Link to="/subjects/accounting">Accounting Help</Link>
-            <Link to="/subjects/psychology">Psychology Help</Link>
-            <Link to="/subjects/economics">Economics Help</Link>
-            <Link to="/subjects/chemistry">Chemistry Help</Link>
-            <Link to="/subjects/biology">Biology Help</Link>
-            <Link to="/subjects/engineering">Engineering Help</Link>
-            <Link to="/subjects/history">History Help</Link>
-            <Link to="/subjects/english">English & Writing Help</Link>
+
+      {/* SEO SCROLLING RIBBONS */}
+      <div className="ehp-ribbons">
+        <div className="ehp-ribbons-head">
+          <p className="ehp-sec-label" style={{ textAlign: 'center' }}>Explore eHomeworkMarket</p>
+          <h2 className="ehp-sec-title" style={{ textAlign: 'center' }}>Browse by subject, task, or university</h2>
+        </div>
+
+        <div className="ehp-ribbon-wrap">
+          <div className="ehp-ribbon-track ehp-rib-left">
+            {[...SUBJECT_LINKS, ...SUBJECT_LINKS].map((s, i) => (
+              <Link key={'s'+i} to={s.to} className="ehp-pill">{s.label}</Link>
+            ))}
           </div>
-          <div className="ehp-seo-col">
-            <h4>How We Help</h4>
-            <Link to="/help/do-my-homework">Do My Homework</Link>
-            <Link to="/help/assignment-help">Assignment Help</Link>
-            <Link to="/help/essay-writing-help">Essay Writing Help</Link>
-            <Link to="/help/exam-help">Exam Help</Link>
-            <Link to="/help/lab-report-help">Lab Report Help</Link>
-            <Link to="/help/presentation-help">Presentation Help</Link>
-            <Link to="/help/project-help">Project Help</Link>
-            <Link to="/help/discussion-post-help">Discussion Post Help</Link>
-            <Link to="/help/online-class-help">Online Class Help</Link>
+        </div>
+
+        <div className="ehp-ribbon-wrap">
+          <div className="ehp-ribbon-track ehp-rib-right">
+            {[...HELP_LINKS, ...HELP_LINKS].map((s, i) => (
+              <Link key={'h'+i} to={s.to} className="ehp-pill">{s.label}</Link>
+            ))}
           </div>
-          <div className="ehp-seo-col">
-            <h4>Universities</h4>
-            <Link to="/universities/walden">Walden University</Link>
-            <Link to="/universities/university-of-phoenix">University of Phoenix</Link>
-            <Link to="/universities/snhu">SNHU</Link>
-            <Link to="/universities/strayer">Strayer University</Link>
-            <Link to="/universities/liberty">Liberty University</Link>
-            <Link to="/universities/capella">Capella University</Link>
-            <Link to="/universities/grand-canyon">Grand Canyon University</Link>
-            <Link to="/universities/chamberlain">Chamberlain University</Link>
-            <Link to="/universities/devry">DeVry University</Link>
-            <Link to="/universities/umgc">UMGC</Link>
-            <Link to="/universities/wgu">WGU</Link>
-            <Link to="/universities/purdue-global">Purdue Global</Link>
+        </div>
+
+        <div className="ehp-ribbon-wrap">
+          <div className="ehp-ribbon-track ehp-rib-left-slow">
+            {[...UNI_LINKS, ...UNI_LINKS].map((s, i) => (
+              <Link key={'u'+i} to={s.to} className="ehp-pill">{s.label}</Link>
+            ))}
           </div>
         </div>
       </div>
